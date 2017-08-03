@@ -1,0 +1,274 @@
+@using Synapse.Core
+@using Microsoft.AspNetCore.Html
+@{
+    ViewBag.Title = "Plans";
+}
+
+@{
+    Func<dynamic, IHtmlContent> ShowExecuteTabContent = 
+        @<text>
+            <div style="margin-bottom:3px;padding:5px;background-color: #666;color:#fff;">
+                <label>Request Number: </label>
+                @(Html.Kendo().TextBox().Name("txt-request-number").HtmlAttributes(new { data_bind = "enabled: planSelected" }))
+                @(Html.Kendo().Button().Name("btn-execute-plan").Icon("play").Content("Execute").Events(e => e.Click("SYNAPSEUI.btnExecutePlanClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected, visible: isExecute" }))
+                @(Html.Kendo().Button().Name("btn-reset").Icon("reset").Content("Reset").Events(e => e.Click("SYNAPSEUI.btnResetClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected, visible: isReset" }))
+            </div>
+            @(Html.Kendo().TreeList<SynapseUI.ViewModels.DynamicParametersVM>()
+                    .Name("treelist-dynamic-params")
+                    .AutoBind(false)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Field(c => c.ActionName).Width(220);
+                        columns.Add().Field(c => c.ActionGroup).Width(70).HtmlAttributes(new { @style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
+                        columns.Add().Field(c => c.DynamicParameterName).Width(200);
+                        columns.Add().Field(c => c.DynamicParameterValue).Width(200).TemplateId("treelist-dynamic-params-override-template");
+                        columns.Add().Title("Pass Blank Value?").Width(80).TemplateId("treelist-dynamic-params-pass-blank-template").HtmlAttributes(new { style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
+                    })
+                    .Resizable(true)
+                    .Sortable(false)
+                    .Selectable(true)
+                    .DataSource(dataSource => dataSource
+                        .Read(read => read.Action("GetDynamicParameters", "Home").Data("SYNAPSEUI.treelistDynamicParamsData").Type(HttpVerbs.Get))
+                        .Model(m =>
+                        {
+                            m.Expanded(true);
+                            m.Id(f => f.ActionId);
+                            m.ParentId(f => f.ParentActionId);
+                            m.Field(f => f.ActionName);
+                            m.Field(f => f.ActionGroup);
+                            m.Field(f => f.DynamicParameterName);
+                            m.Field(f => f.DynamicParameterValue);
+                        })
+                    )
+                    .HtmlAttributes(new { style = "height: 400px;" })
+            )
+        </text>;
+
+    Func<dynamic, IHtmlContent> ShowHistoryTabContent = 
+        @<text>
+            <div style="margin-bottom:3px; padding:5px;background-color: #666;">
+                @(Html.Kendo().Button().Name("btn-refresh-plan-history").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshPlanHistoryClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
+            </div>
+            @(Html.Kendo().Grid<SynapseUI.ViewModels.PlanHistoryVM>()
+                .Name("grid-plan-history")
+                .AutoBind(false)
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .ServerOperation(true)
+                    .Read(read => read.Action("GetPlanHistoryList", "Home").Data("SYNAPSEUI.gridPlanHistoryData").Type(HttpVerbs.Post))
+                    )
+                .Columns(columns =>
+                {
+                    //columns.Bound(p => p.Name).Width(150).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                    columns.Bound(p => p.PlanInstanceId).Width(200).Title("Instance Id");
+                    columns.Bound(p => p.RequestUser).Width(100);
+                    columns.Bound(p => p.RequestNumber).Width(100);
+                    columns.Bound(p => p.LastModified).Width(150);
+                    columns.Bound(p => p.Status).Width(200);
+                })
+                //.Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                .Selectable()
+                .Events(e => e.Change("SYNAPSEUI.gridPlanHistoryChange").DataBound("SYNAPSEUI.gridPlanHistoryDataBound"))
+                .Scrollable(scr => scr.Height(200))
+                .Resizable(resize => resize.Columns(true))
+            )
+            <br />
+            <div id="result-plan-container">
+                <label>Instance Id: </label>&nbsp;<span id="span-plan-instance-id" data-bind="text: selectedInstanceId"></span>                
+                @(Html.Kendo().PanelBar()
+                            .Name("pnl-result-plan")
+                            //.ExpandMode(PanelBarExpandMode.Single)
+                            .Items(panelbar =>
+                            {
+                                panelbar.Add()
+                                    .Text("Result Plan")
+                                    .Expanded(false)
+                                    .Content(@"<pre style='height:150px;width:inherit'><code id='code-result-plan'></code></pre>");
+                                panelbar.Add()
+                                    .Text("Result Plan - Flowchart")
+                                    .Content(@"
+                                        <div style='overflow:auto; height:inherit; width: inherit'>
+                                            <div id='diagram-result-plan' style= 'height: 150px;'></div>
+                                        </div>");
+                            })
+                )
+            </div>
+        </text>;
+
+    Func<dynamic, IHtmlContent> ShowHelpTabContent =
+        @<text>
+        </text>;
+
+
+}
+
+<h2 id="pageTitle">@ViewBag.Title</h2>
+
+<table id="plans" class="table table-bordered">
+    <tr>
+        <td class="col-xs-2">
+            <div id="plan-container-tree-section">
+                <div class="section-header">
+                    <h3>Plan Container Tree</h3>
+                </div>
+            </div>
+        </td>
+        <td class="col-xs-2">
+            <div id="plan-list-section">
+                <div class="section-header">
+                    <h3>
+                        <span id="span-filter-type" class="k-content regex-filter" title="Choose RegEx or In-string filter mode"></span>
+                        @(Html.Kendo().TextBox().Name("txt-filter").HtmlAttributes(new { placeholder = "regex filter", style = "width: 160px;" }))
+                        @(Html.Kendo().Button().Name("btn-refresh-plan-list").Icon("refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshPlanListClick")).HtmlAttributes(new { type = "button", title = "Refresh list" }))
+                    </h3>
+                </div>
+                <div class="section-body">
+                    @(Html.Kendo().ListBox().Name("listbox-plan-list")
+            .Selectable(ListBoxSelectable.Single)
+            .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "Home").Data("SYNAPSEUI.listboxPlanListData")))
+            .Events(e => e
+                .Change("SYNAPSEUI.listboxPlanListChange")
+                .DataBound("SYNAPSEUI.listboxPlanListDataBound"))
+            .HtmlAttributes(new { style = "width: 100%;" })
+                    )
+                </div>
+            </div>
+        </td>
+        <td class="col-xs-8">
+            <div id="plan-detail-section">
+                <div class="section-header">
+                    <h3>Plan name: <span id="span-planname" data-bind="text: selectedPlanName"></span></h3>
+                </div>
+                <div class="section-body">
+                    @(Html.Kendo().TabStrip()
+                        .Name("tabstrip") //The name of the TabStrip is mandatory. It specifies the "id" attribute of the widget.
+                        .Items(items =>
+                        {
+                            //items.Add().Text("Execute").Selected(true).Content(ExecuteSection().ToHtmlString());
+                            items.Add().Text("Execute").Selected(true).Content(
+                                @<text>@ShowExecuteTabContent(null)
+                                    @*<div style="margin-bottom:3px;padding:5px;background-color: #666;color:#fff;">
+                                        <label>Request Number: </label>
+                                        @(Html.Kendo().TextBox().Name("txt-request-number").HtmlAttributes(new { data_bind = "enabled: planSelected" }))
+                                        @(Html.Kendo().Button().Name("btn-execute-plan").Icon("play").Content("Execute").Events(e => e.Click("SYNAPSEUI.btnExecutePlanClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected, visible: isExecute" }))
+                                        @(Html.Kendo().Button().Name("btn-reset").Icon("reset").Content("Reset").Events(e => e.Click("SYNAPSEUI.btnResetClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected, visible: isReset" }))
+                                    </div>
+                                    @(Html.Kendo().TreeList<SynapseUI.ViewModels.DynamicParametersVM>()
+                                        .Name("treelist-dynamic-params")
+                                        .AutoBind(false)
+                                        .Columns(columns =>
+                                        {
+                                            columns.Add().Field(c => c.ActionName).Width(220);
+                                            columns.Add().Field(c => c.ActionGroup).Width(70).HtmlAttributes(new { @style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
+                                            columns.Add().Field(c => c.DynamicParameterName).Width(200);
+                                            columns.Add().Field(c => c.DynamicParameterValue).Width(200).TemplateId("treelist-dynamic-params-override-template");
+                                            columns.Add().Title("Pass Blank Value?").Width(80).TemplateId("treelist-dynamic-params-pass-blank-template").HtmlAttributes(new { style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });                                            
+                                        })
+                                        .Resizable(true)
+                                        .Sortable(false)
+                                        .Selectable(true)
+                                        .DataSource(dataSource => dataSource
+                                            .Read(read => read.Action("GetDynamicParameters", "Home").Data("SYNAPSEUI.treelistDynamicParamsData").Type(HttpVerbs.Get))
+                                            .Model(m =>
+                                            {
+                                                m.Expanded(true);
+                                                m.Id(f => f.ActionId);
+                                                m.ParentId(f => f.ParentActionId);
+                                                m.Field(f => f.ActionName);
+                                                m.Field(f => f.ActionGroup);
+                                                m.Field(f => f.DynamicParameterName);
+                                                m.Field(f => f.DynamicParameterValue);
+                                            })
+                                        )
+                                        .HtmlAttributes(new { style = "height: 400px;" })
+                                    )*@
+                                </text>
+                            );
+                            items.Add().Text("Status").Content(
+                                @<text>
+                                    <div style="margin-bottom:3px; padding:5px;background-color: #666;color:#fff;">
+                                        <label>Instance Id:</label>&nbsp;<span id="span-last-executed-instance-id" data-bind="text: lastExecutedInstanceId"></span>
+                                        @(Html.Kendo().Button().Name("btn-refresh-plan-status").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshPlanStatusClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planExecuted" }))
+                                        &nbsp;@(Html.Kendo().Button().Name("btn-cancel-plan").Icon("close").Content("Cancel").Events(e => e.Click("SYNAPSEUI.btnCancelPlanClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planExecuted" }))
+                                    </div>
+                                    <div style="overflow:auto;height:inherit;width:inherit">
+                                        <div id="diagram-plan-status" style="height: 400px;"></div>                                        
+                                    </div>
+                                </text>
+                            );
+                            items.Add().Text("Logs").Content(
+                                @<text>
+                                    <div style="margin-bottom:3px; padding:5px;background-color: #666;">
+                                        @(Html.Kendo().Button().Name("btn-refresh-logs").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshLogsClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
+                                    </div>
+                                </text>
+                            );
+                            items.Add().Text("History").Content(
+                                @<text>@ShowHistoryTabContent(null)
+                                    @*<div style="margin-bottom:3px; padding:5px;background-color: #666;">
+                                        @(Html.Kendo().Button().Name("btn-refresh-plan-history").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshPlanHistoryClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
+                                    </div>
+
+                                    @(Html.Kendo().Grid<SynapseUI.ViewModels.PlanHistoryVM>()
+                                        .Name("grid-plan-history")
+                                        .AutoBind(false)
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            .ServerOperation(true)
+                                            .Read(read => read.Action("GetPlanHistoryList", "Home").Data("SYNAPSEUI.gridPlanHistoryData").Type(HttpVerbs.Post))
+                                            )
+                                        .Columns(columns =>
+                                        {
+                                            //columns.Bound(p => p.Name).Width(150).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                                            columns.Bound(p => p.PlanInstanceId).Width(200).Title("Instance Id");
+                                            columns.Bound(p => p.RequestUser).Width(100);
+                                            columns.Bound(p => p.RequestNumber).Width(100);
+                                            columns.Bound(p => p.LastModified).Width(150);
+                                            columns.Bound(p => p.Status).Width(200);
+                                        })
+                                        //.Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                                        .Selectable()
+                                        .Events(e => e.Change("SYNAPSEUI.gridPlanHistoryChange").DataBound("SYNAPSEUI.gridPlanHistoryDataBound"))
+                                        .Scrollable(scr => scr.Height(200))
+                                        .Resizable(resize => resize.Columns(true))
+                                    )
+                                    <br />
+                                    <div id="result-plan-container">
+                                        <label>Instance Id: </label>&nbsp;<span id="span-plan-instance-id" data-bind="text: selectedInstanceId"></span>
+                                        <pre><code id="code-result-plan"></code></pre>
+                                    </div>*@
+                                </text>
+                            );
+                            items.Add().Text("Help").Content(@<text>@ShowHelpTabContent(null)</text>);
+                        })
+                        .Animation(false)
+                        .HtmlAttributes(new { style = "height: auto;" })
+                        .Events(e => e.Select("SYNAPSEUI.tabstripSelect"))
+                    )
+                </div>
+            </div>
+        </td>
+
+    </tr>
+</table>
+
+<script id="treelist-dynamic-params-override-template" type="text/x-kendo-template">
+    # if ( DynamicParameterName != null && DynamicParameterName != '' ) { #
+    @*<input type='text' name='override[#= ActionId #]' value='' class="k-textbox"/>*@
+    <input type='text' name=#: DynamicParameterName # value='' class="k-textbox js-dynamic-value" />
+# } #
+</script>
+<script id="treelist-dynamic-params-pass-blank-template" type="text/x-kendo-template">
+# if ( DynamicParameterName != null && DynamicParameterName != '' ) { #
+    @(Html.Kendo().CheckBox().Name("passblank").Label("").HtmlAttributes(new { @class="js-pass-blank" }))
+# } #
+</script>
+
+<environment names = "Development" >
+    <script src="~/js/index.js"></script>
+</environment>
+<environment names = "Staging,Production" >
+    <script src="~/js/index.min.js"></script>
+</environment>
+
+

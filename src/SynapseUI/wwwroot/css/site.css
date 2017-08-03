@@ -1,0 +1,218 @@
+﻿html, body, div, span, iframe,
+h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd, ol, ul, li,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, footer, header, section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  background-color: transparent;
+}
+/* HTML5 display-role reset for older browsers */
+body {
+  line-height: 1;
+  font-size: 11px;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+html, body, pre, code {
+height: 100%;
+font-family: 'Open Sans',arial,sans-serif;
+font-size: 11px;
+color: #787878; /* kendo theme color */
+}
+
+html {
+    box-sizing: border-box;
+}
+
+pre { border: 1px; }
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+h2 {font-size: 18px;}
+
+h5 {font-size: 14px;}
+
+pre, pre code { overflow: auto; white-space:pre;}
+
+/* hides placeholder when input gets the focus - not tested */
+input:focus::-webkit-input-placeholder { color:transparent; }
+input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
+
+input::-webkit-input-placeholder { font-style:italic; }
+input:-moz-placeholder { font-style: italic; } /* FF 4-18 */
+input::-moz-placeholder { font-style: italic; } /* FF 19+ */
+input:-ms-input-placeholder { font-style:italic; } /* IE 10+ */
+
+/* === bootstrap overrides === */
+/* bootstrap 3.0 doesnt have a definition for container-fluid */
+.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.dropdown-menu
+{
+    border-radius:0px;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #7ea700; /* kendo ui metro theme colour */
+}
+.table thead > tr > th,
+.table tbody > tr > th,
+.table tfoot > tr > th,
+.table thead > tr > td,
+.table tbody > tr > td,
+.table tfoot > tr > td {
+  padding: 0px;
+}
+pre{border-radius: 0px;}
+
+/* === end of bootstrap overrides === */
+
+#main-content { padding-top: 50px; }
+
+#pageTitle {padding-top:10px; padding-bottom:10px;}
+
+/* restore kendo grid css overwritten by bootstrap*/
+.k-grid td
+{
+padding: .4em .6em !important;
+line-height: 1.6em !important;
+vertical-align: middle !important;
+}
+/* kendo overrides */
+#tabstrip .k-tabstrip-items {padding-top:0; }
+#tabstrip.k-widget {border-width:0px;}  /* disable border around the tabstrips*/
+.k-tabstrip-items .k-loading {border-top:0px;} /* this will cause the top border of tab strips to be a thin line rather than a thick line*/
+.k-treelist .k-icon.k-i-collapse:before {content: "\e146";}
+.k-treelist .k-icon.k-i-expand:before {content: "\e145";}
+.k-button.k-button-icon .k-icon, .k-button.k-button-icontext .k-icon {vertical-align: text-bottom;}  /* default was text-top but doesnt seem to work. somehow setting it to text-bottom works */
+.k-grid-header th.k-header { height: auto; white-space: normal;}
+.k-treelist .k-treelist-group {font-weight: bold;}
+.k-state-selected > .k-link, .k-panelbar > li > .k-state-selected, .k-panelbar > li.k-state-default > .k-state-selected.k-link {
+    /*background-color: #C7D3A9;
+    color: black;*/
+    box-shadow: none;
+}
+
+#hamburger-menu {
+    text-decoration: none !important;
+    color: inherit;
+}
+#hamburger-menu>a
+{
+    text-decoration:none !important;
+    color:inherit;    
+}
+#span-filter-type {
+    display: inline-block;
+    width: 20px;
+    text-align: center;  
+    background-color: transparent;
+    color: #fff;
+}
+.regex-filter:after {
+    content: "{..}";
+    font-weight: bold;
+}
+.in-string-filter:after {
+    content: "\f069";
+    font-family: FontAwesome;
+}
+.section-header 
+{
+    height:4em; /*50px;*/ 
+    padding:10px 5px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    background-color: #666;
+    color: #fff;
+}
+.section-header>h3
+{       
+    font-size: 1em;
+    line-height: 2.3em;
+    margin-left: -5px; margin-right:-5px;
+    padding-left:5px;padding-right:5px;        
+}
+.section-body {margin:5px;}
+
+table#plans {table-layout: fixed; width:100%;}
+table#plans td:nth-child(-n+2) {width: 230px;} /* 1st and 2nd column has fixed width */
+/*#plan-container-tree-section {width: 100%; min-width:250px;}
+#plan-list-section {width: 100%; min-width:250px;}
+#plan-detail-section {min-width: 1000px}*/
+
+#plan-detail .k-tabstrip-wrapper #tabstrip
+{
+border-top: 3px solid #7ea700;
+border-left: 1px solid #7ea700;
+border-right: 1px solid #7ea700;
+border-bottom: 1px solid #7ea700;
+}
+/*#plan-detail .k-tabstrip-items .k-item
+{
+    border-top:0px;
+    border-left:0px;
+}*/
+#plan-detail .k-tabstrip-items .k-item.k-tab-on-top
+{
+border-top: 3px solid #25a0da;
+}
+#plan-detail .k-tabstrip-items {margin-top: -3px;}
+#plan-detail .k-tabstrip-items .k-item
+{
+outline:none;
+border-top: 0px;
+/*border-top: 3px solid #7ea700;*/
+}
+#plan-detail .k-tabstrip-items .k-loading {border-top:0px;}
+#plan-detail .k-tabstrip-items .k-first:not(.k-state-active){border-left: 0px;}
+#plan-detail .k-content 
+{
+border-left: 0px;
+border-right: 0px;
+border-bottom: 0px;
+}
+
+#result-plan-container
+{
+    height:250px;
+    width: inherit; /* --- fixed layout 800px; */
+}
+
+#result-plan-container pre {
+    height: 150px; /*100%;*/
+    width: inherit; /* fixed layout 100%;*/
+}
+#result-plan-container pre, #result-plan-container pre code { overflow: auto; white-space:pre;}
+
+/*#pnl-result-plan {
+    height: 100%;
+    overflow: auto;
+}*/
+
+/* == up to here */
+/* === above reset */
+/*body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}*/
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+
