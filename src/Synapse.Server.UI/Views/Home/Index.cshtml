@@ -1,0 +1,234 @@
+@using Synapse.Core
+@using Microsoft.AspNetCore.Html
+@{
+    ViewBag.Title = "Plans";
+}
+
+@{
+    Func<dynamic, IHtmlContent> ShowExecuteTabContent = 
+        @<text>
+            <div id="plan-input-container" data-bind="visible: planInputIsVisible">
+                <div style="margin-bottom:3px;padding:5px;background-color: #666;color:#fff; position:relative;">
+                    <label>Request number: </label>
+                    @(Html.Kendo().TextBox().Name("txt-request-number").HtmlAttributes(new { data_bind = "enabled: planSelected" }))
+                    @(Html.Kendo().Button().Name("btn-execute-plan").Icon("play").Content("Execute").Events(e => e.Click("SYNAPSEUI.btnExecutePlanClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected, visible: isExecute" }))                    
+                    @(Html.Kendo().Button().Name("btn-reset").Icon("reset").Content("Reset").Events(e => e.Click("SYNAPSEUI.btnResetClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected, visible: isReset" }))
+                    @(Html.Kendo().Button().Name("btn-show-plan-diagram").Content("Show Diagram").HtmlAttributes(new { type = "button", style = "position:absolute; right: 10px;", data_bind = "events:{ click: toggleShowPlanDiagram }, enabled: planSelected" }))
+                </div>
+                @(Html.Kendo().TreeList<Synapse.Server.UI.ViewModels.DynamicParametersVM>()
+                    .Name("treelist-dynamic-params")
+                    .AutoBind(false)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Field(c => c.ActionName).Width(220);
+                        columns.Add().Field(c => c.ActionGroup).Width(70).HtmlAttributes(new { @style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
+                        columns.Add().Field(c => c.ParameterName).Width(200);
+                        columns.Add().Field(c => c.ParameterValue).Width(200).TemplateId("treelist-dynamic-params-override-template");
+                        columns.Add().Title("Pass Blank Value?").Width(80).TemplateId("treelist-dynamic-params-pass-blank-template").HtmlAttributes(new { style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
+                    })
+                    .Resizable(true)
+                    .Sortable(false)
+                    .Selectable(true)                    
+                    .DataSource(dataSource => dataSource
+                        .Read(read => read.Action("GetDynamicParameters", "Home").Data("SYNAPSEUI.treelistDynamicParamsData").Type(HttpVerbs.Get))
+                        .Model(m =>
+                        {
+                            m.Expanded(true);
+                            m.Id(f => f.ActionId);
+                            m.ParentId(f => f.ParentActionId);
+                            m.Field(f => f.ActionName);
+                            m.Field(f => f.ActionGroup);
+                            m.Field(f => f.ParameterName);
+                            m.Field(f => f.ParameterValue);
+                        })
+                    )
+                    .Events(e => e.DataBound("SYNAPSEUI.treelistDynamicParamsDataBound"))
+                    .HtmlAttributes(new { style = "width:100%;" })
+                )
+            </div>
+            <div id="plan-diagram-container" data-bind="visible: planDiagramIsVisible">            
+                <div style="margin-bottom:3px;padding:5px;background-color: #666;color:#fff;">
+                    <button class="k-button" style="visibility:hidden">dummy</button>
+                    @(Html.Kendo().Button().Name("btn-hide-plan-input").Content("Hide Diagram").HtmlAttributes(new { type = "button", style = "float:right; right:10px;", data_bind = "events:{ click: toggleShowPlanDiagram }, enabled: planSelected" }))
+                </div>
+                <div style="box-sizing:border-box;">
+                    <div id="diagram-plan" style="overflow:auto;"></div>
+                </div>
+            </div>
+    </text>;
+
+    Func<dynamic, IHtmlContent> ShowStatusTabContent =
+        @<text>
+            <div style="margin-bottom:3px; padding:5px;background-color: #666;color:#fff;" >
+                <label>Show n records:</label>&nbsp;
+                @(Html.Kendo().DropDownList().Name("ddl-show-n-recs")
+                    .DataTextField("Text")
+                    .DataValueField("Value")
+                    .BindTo(new List<SelectListItem>() {
+                        new SelectListItem() {
+                        Text = "5",
+                        Value = "5"
+                        },
+                        new SelectListItem() {
+                        Text = "25",
+                        Value = "25"
+                        },
+                        new SelectListItem() {
+                        Text = "50",
+                        Value = "50"
+                        },
+                        new SelectListItem() {
+                        Text = "All",
+                        Value = "0"
+                        }
+                    })                    
+                    .HtmlAttributes(new { style = "width: 40px;",
+                        data_bind = "value: showNRecs" })
+                )
+                &nbsp;
+                @(Html.Kendo().CheckBox().Name("chk-auto-refresh-status").HtmlAttributes(new { style = "vertical-align: middle;", data_bind = "checked:autoRefreshStatus, events:{ change: autoRefreshStatusChange }" }) )
+                <label>Refresh every <span data-bind="text: autoRefreshStatusCountDown"></span> secs</label>&nbsp;
+                @(Html.Kendo().Button().Name("btn-refresh-plan-history").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshPlanHistoryClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
+            </div>
+            @(Html.Kendo().Grid<Synapse.Server.UI.ViewModels.PlanHistoryVM>()
+                        .Name("grid-plan-history")
+                        .AutoBind(false)
+                        .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .ServerOperation(true)
+                            .Read(read => read.Action("GetPlanHistoryList", "Home").Data("SYNAPSEUI.gridPlanHistoryData").Type(HttpVerbs.Post))
+                            )
+                        .Columns(columns =>
+                        {
+                            columns.Bound(p => p.PlanInstanceId).Width(150).Title("Instance Id");
+                            columns.Bound(p => p.RequestUser).Width(100);
+                            columns.Bound(p => p.RequestNumber).Width(100);
+                            columns.Bound(p => p.LastModified).Width(150);
+                            columns.Bound(p => p.Status).Width(150).HtmlAttributes(new { style = "color: #= StatusColor #" });
+                        })
+                        .Selectable()
+                        .Navigatable()
+                        .Events(e => e.Change("SYNAPSEUI.gridPlanHistoryChange").DataBound("SYNAPSEUI.gridPlanHistoryDataBound").Navigate("SYNAPSEUI.gridPlanHistoryNavigate"))
+                        .Scrollable(scr => scr.Enabled(true).Height(250))
+                        .Resizable(resize => resize.Columns(true))
+                        .HtmlAttributes(new { style = "height:200px;margin-bottom: 3px;" })
+            )
+
+            <div style="margin-bottom:3px; padding: 5px; background-color: #666;color:#fff; position:relative;">
+                <label>Instance Id: </label>&nbsp;<span id="span-plan-instance-id" data-bind="text: selectedInstanceId"></span>
+                @(Html.Kendo().Button().Name("btn-refresh-result-plan").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshResultPlanClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: instanceSelected" }))
+                @(Html.Kendo().Button().Name("btn-cancel-plan").Icon("close").Content("Cancel").Events(e => e.Click("SYNAPSEUI.btnCancelPlanClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: instanceSelected" }))
+            
+                @(Html.Kendo().Button().Name("btn-show-result-plan-diagram").Content("Show Diagram").HtmlAttributes(new { type = "button", style = "position:absolute; right: 10px;", data_bind = "events:{ click: toggleShowResultPlanDiagram }, enabled: instanceSelected" }))
+
+            </div>
+            <div style="position:relative;">
+                <!-- Keep the <pre> and <code> tags together in 1 line as we dont want to have unnecessary leading white spaces because of the indentations -->
+                <pre id="result-plan-code-container" data-bind="visible: resultPlanCodeIsVisible"><code id='code-result-plan'></code></pre>
+                <div id="text-resize-container" style="position:absolute; top:0;right:20px;">
+                    <a href="#" id="text-smaller" class="k-link" style="display:inline-block;padding:3px;font-weight:bold;" data-bind="click: reduceTextSize">A-</a>
+                    <a href="#" id="text-normal" class="k-link" style="display:inline-block;padding:3px;font-weight:bold;" data-bind="click: resetTextSize">A</a>
+                    <a href="#" id="text-larger" class="k-link" style="display:inline-block;padding:3px;font-weight:bold;" data-bind="click: increaseTextSize">A+</a>
+                </div>
+            </div>
+            <div id="result-plan-diagram-container" data-bind="visible: resultPlanDiagramIsVisible"><div id='diagram-result-plan'></div></div>
+
+        </text>;
+
+    Func<dynamic, IHtmlContent> ShowHelpTabContent =
+        @<text><div style="height:100%;"></div>
+        </text>;
+
+
+}
+<div id="plan">
+    <div class="plan-row" style="height:1px;">
+        <div class="plan-cell-header">
+            <h5>Plan Container Tree</h5>
+        </div>
+        <div class="plan-cell-header">
+            <h5>
+                <span id="span-filter-type" class="k-content regex-filter" title="Choose RegEx or In-string filter mode" data-bind="click: toggleFilterType"></span>
+                @(Html.Kendo().TextBox().Name("txt-filter").HtmlAttributes(new { placeholder = "regex filter", style = "width: 160px;" }))                
+                @(Html.Kendo().Button().Name("btn-refresh-plan-list").Icon("refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshPlanListClick")).HtmlAttributes(new { type = "button", title = "Refresh list" }))
+            </h5>           
+        </div>
+        <div class="plan-cell-header">
+            <h5 style="display:inline-block;color:#fff;">Plan name: <span id="span-planname" data-bind="text: selectedPlanName"></span></h5>
+        </div>
+    </div>
+    <div class="plan-row">
+        <div class="plan-cell">
+            abc
+        </div>
+        <div class="plan-cell">
+            <div style="height:100%;">
+                @(Html.Kendo().ListBox().Name("listbox-plan-list")
+                .Selectable(ListBoxSelectable.Single)
+                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "Home").Data("SYNAPSEUI.listboxPlanListData")))
+                .Events(e => e
+                    .Change("SYNAPSEUI.listboxPlanListChange")
+                    .DataBound("SYNAPSEUI.listboxPlanListDataBound"))
+                .HtmlAttributes(new { style = "width: 100%;height:100%;" })
+                )
+            </div>
+        </div>
+        <div class="plan-cell">
+            <div style="width:100%;height:100%;overflow:auto;">
+                @(Html.Kendo().TabStrip()
+                    .Name("tabstrip") //The name of the TabStrip is mandatory. It specifies the "id" attribute of the widget.
+                    .Navigatable(false)
+                    .Items(items =>
+                    {
+                        items.Add().Text("Execute").Selected(true).Content(@<text>@ShowExecuteTabContent(null)</text>
+                        );
+                        items.Add().Text("Status").Content(@<text>@ShowStatusTabContent(null)</text>
+                        );
+                        items.Add().Text("Logs").Content(
+                        @<text>
+                        <div style="margin-bottom:3px; padding:5px;background-color: #666;">
+                            @(Html.Kendo().Button().Name("btn-refresh-logs").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.btnRefreshLogsClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
+                        </div>
+                        </text>
+                        );
+                        items.Add().Text("Help").Content(@<text>@ShowHelpTabContent(null)</text>);
+                    })
+                    .Animation(false)
+                    @*.HtmlAttributes(new { style = "height: 90%;" })*@
+                    .Events(e => e.Select("SYNAPSEUI.tabstripSelect"))
+                )
+            </div>
+        </div>
+    </div>
+</div>
+@(Html.Kendo().Notification().Name("noti").Position(p => { p.Bottom(12);p.Left(12);p.Pinned(true); }).Stacking(NotificationStackingSettings.Up).HideOnClick(false).AutoHideAfter(0).Button(true)
+    )
+<script id="treelist-dynamic-params-override-template" type="text/x-kendo-template">
+    # if ( ParameterName != null && ParameterName != '' ) { #
+    # if (ParameterValueOptions == null || ParameterValueOptions.length == 0 ) { #
+    @*<input type='text' name='override[#= ActionId #]' value='' class="k-textbox"/>*@
+    <input type='text' name=#: ParameterName # value='' class="k-textbox js-dynamic-value" />
+    # } else { #
+    <select name=#: ParameterName # class="js-dynamic-value">
+        <option value="" selected="selected"></option>
+        # for (var i = 0; i < ParameterValueOptions.length; i++) { #
+        <option value=#: ParameterValueOptions[i].Key #>#= ParameterValueOptions[i].Value #</option>
+        # } #
+    </select>
+    # } #
+    # } #
+</script>
+<script id="treelist-dynamic-params-pass-blank-template" type="text/x-kendo-template">
+    # if ( ParameterName != null && ParameterName != '' ) { #
+    @(Html.Kendo().CheckBox().Name("passblank").Label("").HtmlAttributes(new { @class = "js-pass-blank" }))
+    # } #
+</script>
+
+<environment names="Development">
+    <script src="~/js/index.js"></script>
+</environment>
+<environment names="Staging,Production">
+    <script src="~/js/index.min.js"></script>
+</environment>
+
+

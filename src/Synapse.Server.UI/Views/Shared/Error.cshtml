@@ -1,0 +1,29 @@
+@{
+    ViewBag.Title = "Error";
+}
+<div style="padding-top: 5em; text-align:center; line-height:3em;">    
+    @if (ViewData["ErrorCode"] == null) { ViewData["ErrorCode"] = ""; }    
+    @switch (ViewData["ErrorCode"].ToString())
+    {
+        case "":    @* called from UseExceptionHandler() *@
+            <h1>Error</h1>
+            <h3>An error occurred while processing your request.</h3>
+            break;
+        case "404":
+            <h1>@ViewData["ErrorCode"]</h1>
+            <h3>Sorry, the page you are looking for cannot be found</h3>
+            <h3>Try going back to the @Html.ActionLink("home page", "Index", "Home")</h3>
+            break;
+        default:
+            <h1>@ViewData["ErrorCode"] </h1>
+            <h3>Oops! It looks like something went wrong.</h3>
+            break;
+    }
+</div>
+@*<h3>Development Mode</h3>
+    <p>
+        Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
+    </p>
+    <p>
+        <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
+    </p>*@

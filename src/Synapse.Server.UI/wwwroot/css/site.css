@@ -1,0 +1,264 @@
+﻿/* reset */
+html, body, div, span, iframe,
+h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd, ol, ul, li,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, footer, header, section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  background-color: transparent;
+}
+ol, ul {
+  list-style: none;
+}
+html, body, pre, code {
+height: 100%;
+font-family: 'Open Sans',arial,sans-serif;
+font-size: 12px;
+color: #787878; /* kendo theme color */
+}
+/*html {
+    box-sizing: border-box;
+}*/
+pre { border: 1px; }
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+h2 {font-size: 18px;}
+h5 {font-size: 14px;}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.6em;
+}
+
+h3 {
+    font-size: 1.4em;
+}
+
+h4 {
+    font-size: 1.2em;
+}
+
+h5 {
+    font-size: 1em;
+}
+
+h6 {
+    font-size: .9em;
+}
+pre, pre code { overflow: auto; white-space:pre;}
+/* hides placeholder when input gets the focus - not tested */
+input:focus::-webkit-input-placeholder { color:transparent; }
+input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
+
+input::-webkit-input-placeholder { font-style:italic; }
+input:-moz-placeholder { font-style: italic; } /* FF 4-18 */
+input::-moz-placeholder { font-style: italic; } /* FF 19+ */
+input:-ms-input-placeholder { font-style:italic; } /* IE 10+ */
+
+/* turn on 12x12 scrollbar */
+/*::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+::-webkit-scrollbar-thumb {
+    background: #98a3a6;  
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    -webkit-box-shadow: inset 0 0 12px rgba(0,0,0,0.3);
+    border-radius: 09px;
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
+}*/
+
+/* === bootstrap overrides === */
+/* bootstrap 3.0 doesnt have a definition for container-fluid */
+.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.dropdown-menu
+{
+    border-radius:0px;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #7ea700; /* kendo ui metro theme colour */
+}
+.table thead > tr > th,
+.table tbody > tr > th,
+.table tfoot > tr > th,
+.table thead > tr > td,
+.table tbody > tr > td,
+.table tfoot > tr > td {
+  padding: 0px;
+}
+pre{border-radius: 0px;}
+.navbar-fixed-top {border-bottom:0px;}
+.navbar {margin-bottom:0px;}
+
+/* === end of bootstrap overrides === */
+
+/* restore kendo grid css overwritten by bootstrap*/
+.k-grid td
+{
+padding: .4em .6em !important;
+line-height: 1.6em !important;
+vertical-align: middle !important;
+}
+/* kendo overrides */
+#tabstrip .k-tabstrip-items {padding-top:0; }
+#tabstrip.k-widget {border-width:0px;}  /* disable border around the tabstrips*/
+.k-tabstrip-items .k-loading {border-top:0px;} /* this will cause the top border of tab strips to be a thin line rather than a thick line*/
+.k-treelist .k-icon.k-i-collapse:before {content: "\e146";} /* change the default collapse icon for treelist */
+.k-treelist .k-icon.k-i-expand:before {content: "\e145";}
+.k-panelbar .k-icon.k-panelbar-expand:before {content: "\e015";}  /* change the default expand icon for panelbar */
+.k-panelbar .k-icon.k-panelbar-collapse:before {content: "\e013";}
+.k-button.k-button-icon .k-icon, .k-button.k-button-icontext .k-icon {vertical-align: text-bottom;}  /* default was text-top but doesnt seem to work. somehow setting it to text-bottom works */
+.k-grid-header th.k-header { height: auto; white-space: normal;}
+.k-treelist .k-treelist-group {font-weight: bold;}
+.k-state-selected > .k-link, .k-panelbar > li > .k-state-selected, .k-panelbar > li.k-state-default > .k-state-selected.k-link {
+    /*background-color: #C7D3A9;
+    color: black;*/
+    box-shadow: none;
+}
+.k-dropdown .k-input {vertical-align:middle;}
+.k-checkbox-label:before {
+    width: 11px;
+    height: 11px;
+    font-size: 11px;
+    line-height: 11px;
+}
+.k-listbox .k-list-scroller {border-width:0px;padding:0px;}
+.k-tabstrip .k-content {border-width: 1px 0 0 0;}
+.k-tabstrip-top .k-tabstrip-items .k-state-active {
+    background-color: #7ea700;
+    border-bottom-color: transparent;
+}
+.k-tabstrip-top .k-tabstrip-items .k-state-active .k-link {color: #fff;}
+
+/* end of kendo overrides */
+body {
+    /*display: table;*/
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+.wrapper {
+    height: 100%;
+    width: 100%;
+    display: table;
+}
+.header {
+    display: table-row;
+    width: 100%;
+    height: 1px;
+}
+.main {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+.footer {
+    display: table-row;
+    width: 100%;
+    height: 1px;
+}
+.footer p {padding: 5px 5px;}
+
+/* padding top needed if we use navbar-fixed-top 50px */
+/* if set to 0 causes the border botto of unselected tab strips to disappear */
+/*#main-content {
+    padding-top: 1px;
+}*/
+#hamburger-menu {
+    text-decoration: none !important;
+    color: inherit;
+}
+#hamburger-menu>a
+{
+    text-decoration:none !important;
+    color:inherit;    
+}
+#span-filter-type {
+    display: inline-block;
+    width: 20px;
+    text-align: center;  
+    background-color: transparent;
+    color: #fff;
+}
+.regex-filter:after {
+    content: "{..}";
+    font-weight: bold;
+}
+.in-string-filter:after {
+    content: "\f069";
+    font-family: FontAwesome;
+}
+#plan {
+    display: table;
+    table-layout: fixed;
+    width: 99%;
+    height: 99%;
+    border-collapse: collapse;
+    margin: 5px auto;
+}
+#plan .plan-row {
+    display: table-row;
+    width: 100%;
+}
+#plan .plan-cell-header {
+    display: table-cell;
+    border: 1px solid #ddd;
+    background-color: #666;
+    vertical-align: middle;
+    padding: 10px 5px;
+}
+#plan .plan-cell-header:nth-child(-n+2) {
+    width: 20%;
+}
+#plan .plan-cell-header h5 {
+    display: inline-block;
+    color: #fff;
+}
+#plan .plan-cell {
+    display: table-cell;
+    /*width: 20%;*/
+    border: 1px solid #ddd;
+    vertical-align: top;
+    padding: 5px 5px;
+}
+#result-plan-code-container {
+    height: 250px;
+    box-sizing: border-box;
+}
+#result-plan-diagram-container {
+    height: 250px; /*100%;*/
+    width: inherit; /* fixed layout 100%;*/
+    overflow: auto;
+    box-sizing: border-box;
+}
+.hide {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+body.chrome {
+    font-size: 11px;
+}
