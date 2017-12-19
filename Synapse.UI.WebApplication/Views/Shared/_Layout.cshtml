@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@Html.Raw(this.ViewBag.Title as string)</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    <base href="@Url.Content("~/")">
+    <link rel="icon" href="@Url.Content("~/img/synapse-logo.png")" />
+
+    <link href="https://kendo.cdn.telerik.com/2017.2.621/styles/kendo.common.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://kendo.cdn.telerik.com/2017.2.621/styles/kendo.metro.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://kendo.cdn.telerik.com/2017.2.621/js/jquery.min.js"></script>    
+    <script src="https://kendo.cdn.telerik.com/2017.2.621/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2017.2.621/js/kendo.aspnetmvc.min.js"></script>
+
+    <link href="~/css/reset.min.css" rel="stylesheet" />
+    <link href="~/css/layout.min.css" rel="stylesheet" />
+    @RenderSection("Styles", false)
+</head>
+<body>
+    <div id="s-wrapper">
+        <div id="s-header">
+            <div class="s-nav">
+                <div class="s-nav-brand">
+                    <a href="/">Synapse</a><span>&nbsp;&#8208;&nbsp;@ViewBag.Title</span>
+                </div>
+                <div class="s-nav-menu">
+                    <a class="s-nav-menu-hamburger s-js-nav-hamburger" href="#"><i class="fa fa-bars"></i></a>
+                </div>
+            </div>
+        </div>
+        <div id="s-content">
+            @RenderBody()
+        </div>
+        <div id="s-footer"></div>
+    </div>    
+    <div class="s-nav-menu-inner">
+        <ul class="s-nav-menu-list">
+            @foreach (var menuItem in Synapse.UI.WebApplication.Menu.Items)
+            {
+                <li>
+                    <a href="@menuItem.Url">
+                        @menuItem.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+    <script src="~/js/webapp.min.js"></script>
+
+    @RenderSection("Scripts", false)
+</body>
+</html>

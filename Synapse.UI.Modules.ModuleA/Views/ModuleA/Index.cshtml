@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Module A";
+}
+@*<p>Test DI into view: @testservice.Test()</p>*@
+<p>@Synapse.UI.Modules.ModuleA.ModuleAClass.teststring()</p>
+<img src="Images.113.png" />
+
+<label>Plan name: </label>
+<input type="text" id="planname" />
+<button id="startplan">Start Plan</button>
+
+@section Styles {
+    <link href="~/Styles.ModuleA.css" rel="stylesheet" />
+}
+@section Scripts {
+    <script src="~/Scripts.ModuleA.js"></script>
+    <script>
+        //ModuleA.helloworld();
+    </script>
+<script>
+        $(function () {
+            $("#startplan").click(function (e) {
+                $.ajax({
+                    async: true,
+                    method: 'GET',
+                    url: "/ModuleA/StartPlan",
+                    data: { 'planName': $("#planname").val() }
+                }).done(function (data, textStatus, xhr) { alert(data); })
+               
+            });
+        });
+</script>
+}

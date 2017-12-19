@@ -1,0 +1,24 @@
+// Configure bundling and minification for the project.
+// More info at https://go.microsoft.com/fwlink/?LinkId=808241
+[
+  {
+    "outputFileName": "Scripts/plan-execution.min.js",
+    // An array of relative input file paths. Globbing patterns supported
+    "inputFiles": [
+      "Scripts/plan-execution.js"
+    ]
+  },
+  {
+    "outputFileName": "Styles/plan-execution.min.css",
+    "inputFiles": [
+      "Styles/plan-execution.css"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  }
+]
