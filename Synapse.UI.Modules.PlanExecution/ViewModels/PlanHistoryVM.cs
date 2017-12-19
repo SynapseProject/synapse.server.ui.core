@@ -1,7 +1,7 @@
 ﻿using Synapse.Core;
-using ModularUI.Modules.PlanExecution.Helpers;
+using Synapse.UI.Modules.PlanExecution.Helpers;
 
-namespace ModularUI.Modules.PlanExecution.ViewModels
+namespace Synapse.UI.Modules.PlanExecution.ViewModels
 {
     public class PlanHistoryVM
     {

@@ -1,6 +1,6 @@
 ﻿using Synapse.Core;
 
-namespace ModularUI.Modules.PlanExecution.Helpers
+namespace Synapse.UI.Modules.PlanExecution.Helpers
 {
     public static class StatusHelper
     {

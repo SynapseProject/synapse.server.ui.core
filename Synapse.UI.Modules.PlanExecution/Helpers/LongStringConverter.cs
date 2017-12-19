@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace ModularUI.Modules.PlanExecution.Helpers
+namespace Synapse.UI.Modules.PlanExecution.Helpers
 {
     //https://gist.github.com/Bouke/aa00f3952e9690223f51
     public class LongStringConverter : JsonConverter

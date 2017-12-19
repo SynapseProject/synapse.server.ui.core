@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Synapse.Core;
 
-namespace ModularUI.Modules.PlanExecution.ViewModels
+namespace Synapse.UI.Modules.PlanExecution.ViewModels
 {
     public class DynamicParametersVM
     {

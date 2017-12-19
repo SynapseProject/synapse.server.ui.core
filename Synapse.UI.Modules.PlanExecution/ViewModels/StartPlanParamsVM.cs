@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace ModularUI.Modules.PlanExecution.ViewModels
+namespace Synapse.UI.Modules.PlanExecution.ViewModels
 {
     public class StartPlanParamsVM
     {

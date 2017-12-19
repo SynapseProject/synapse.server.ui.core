@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using ModularUI.Modules.PlanExecution.ViewModels;
-using ModularUI.Modules.PlanExecution.Helpers;
+using Synapse.UI.Modules.PlanExecution.ViewModels;
+using Synapse.UI.Modules.PlanExecution.Helpers;
 using Synapse.Core;
 using Synapse.Services;
 using Kendo.Mvc.UI;
@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
-namespace ModularUI.Modules.PlanExecution.Controllers
+namespace Synapse.UI.Modules.PlanExecution.Controllers
 {
     public class PlanExecution : Controller
     {
@@ -43,31 +43,9 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             return View();
             //return Unauthorized(); // return BadRequest(); // used to test error handling by UseStatusCodePagesWithReExecute()
         }
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-        public IActionResult Error(int? id = null)
-        {
-            ViewData["ErrorCode"] = id;
-            return View();
-        }
         [HttpGet]
         public async Task<ActionResult> GetPlanList(string filterString, bool isRegexFilter)
         {
-            //string _controller = this.RouteData.Values["controller"].ToString();
-            //string _action = this.RouteData.Values["action"].ToString();
-            //string _logMessage = $"{_controller}.{_action}({nameof(filterString)}:{filterString},{nameof(isRegexFilter)}:{isRegexFilter}) from {HttpContext.Request.UserHostName}:{HttpContext.Request.UserHostAddress}.";
-            //string _logMessage = $"{_controller}.{_action}({nameof(filterString)}:{filterString},{nameof(isRegexFilter)}:{isRegexFilter}) from {this.HttpContext.Connection.RemoteIpAddress}.";
             _logger.LogInformation($"Arguments:({nameof(filterString)}:{filterString},{nameof(isRegexFilter)}:{isRegexFilter}).");
 
             List<string> _planList = null;
@@ -81,7 +59,7 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1000, ex, "Exception encountered.");
+                _logger.LogError(ex, "Exception encountered.");
             }
             if (_planList == null)
             {
@@ -111,11 +89,6 @@ namespace ModularUI.Modules.PlanExecution.Controllers
         [HttpPost]
         public async Task<ActionResult> GetPlanHistoryList([DataSourceRequest] DataSourceRequest request, string planUniqueName, int showNRecs)
         {
-            //string _controller = this.RouteData.Values["controller"].ToString();
-            //string _action = this.RouteData.Values["action"].ToString();
-            // executing controller.action with arguments 
-            // string _logMessage = $"{_controller}.{_action}({nameof(planUniqueName)}:{planUniqueName}) from {HttpContext.Request.UserHostName}:{HttpContext.Request.UserHostAddress}.";
-            //string _logMessage = $"{_controller}.{_action}({nameof(planUniqueName)}:{planUniqueName}) from {this.HttpContext.Connection.RemoteIpAddress}.";
             _logger.LogInformation($"Arguments:({nameof(planUniqueName)}:{planUniqueName},{nameof(showNRecs)}:{showNRecs}),{nameof(request)}:{request.ToString()}.");
 
             List<long> _planInstanceIdList = null;
@@ -141,22 +114,17 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1000, ex, "Exception encountered.");
+                _logger.LogError(ex, "Exception encountered.");
             }
             if (_planHistoryList == null)
-                //-return new JsonNetResult(new List<PlanHistoryVM>());
                 return Json(new List<PlanHistoryVM>());
             else
-                //-return new JsonNetResult(_planHistoryList.ToDataSourceResult(request));
                 return Json(_planHistoryList.ToDataSourceResult(request));
 
         }
         [HttpGet]
         public async Task<ActionResult> GetDynamicParameters([DataSourceRequest] DataSourceRequest request, string planUniqueName)
         {
-            //string _controller = this.RouteData.Values["controller"].ToString();
-            //string _action = this.RouteData.Values["action"].ToString();
-            //string _logMessage = $"{_controller}.{_action}({nameof(planUniqueName)}:{planUniqueName}) from {this.HttpContext.Connection.RemoteIpAddress}.";
             _logger.LogInformation($"Arguments:({nameof(planUniqueName)}:{planUniqueName},{nameof(request)}:{request.ToString()}).");
 
             List<DynamicParametersVM> _parms = null;
@@ -176,7 +144,7 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1000, ex, "Exception encountered.");
+                _logger.LogError(ex, "Exception encountered.");
             }
             if (_parms == null) _parms.Add(new DynamicParametersVM());
 
@@ -240,9 +208,6 @@ namespace ModularUI.Modules.PlanExecution.Controllers
         //[HttpGet]
         public async Task<ActionResult> GetPlanStatus(string planUniqueName, long? planInstanceId = null)
         {
-            //string _controller = this.RouteData.Values["controller"].ToString();
-            //string _action = this.RouteData.Values["action"].ToString();
-            //string _logMessage = $"{_controller}.{_action}({nameof(planUniqueName)}:{planUniqueName},{nameof(planInstanceId)}:{planInstanceId}) from {this.HttpContext.Connection.RemoteIpAddress}.";
             _logger.LogInformation($"Argumnets:({nameof(planUniqueName)}:{planUniqueName},{nameof(planInstanceId)}:{planInstanceId}).");
 
             Plan _plan = null;
@@ -255,14 +220,12 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1000, ex, "Exception encountered.");
+                _logger.LogError(ex, "Exception encountered.");
             }
             if (_plan == null) //_plan = new Plan();
                 return new EmptyResult();
             else
             {
-                //return new JsonNetResult(_plan);                
-                //return Json(_plan, new JsonSerializerSettings { Converters = new[] { new StringEnumConverter() } });
                 JsonSerializerSettings _serializerSettings = new JsonSerializerSettings();
                 _serializerSettings.Converters.Add(new StringEnumConverter());
                 _serializerSettings.Converters.Add(new LongStringConverter());  // used to convert instanceID to string so they can be read in full by javascript
@@ -273,9 +236,6 @@ namespace ModularUI.Modules.PlanExecution.Controllers
         [HttpGet]
         public async Task<ActionResult> GetPlanForDiagram(string planUniqueName)
         {
-            //string _controller = this.RouteData.Values["controller"].ToString();
-            //string _action = this.RouteData.Values["action"].ToString();
-            //string _logMessage = $"{_controller}.{_action}({nameof(planUniqueName)}:{planUniqueName}) from {this.HttpContext.Connection.RemoteIpAddress}.";
             _logger.LogInformation($"Arguments:({nameof(planUniqueName)}:{planUniqueName}).");
 
             Plan _plan = null;
@@ -291,7 +251,7 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1000, ex, "Exception encountered.");
+                _logger.LogError(ex, "Exception encountered.");
             }
             if (_status == null) //_plan = new Plan();
                 return new EmptyResult();
@@ -301,9 +261,6 @@ namespace ModularUI.Modules.PlanExecution.Controllers
         [HttpGet]
         public async Task<ActionResult> GetResultPlanForDiagram(string planUniqueName, long planInstanceId)
         {
-            //string _controller = this.RouteData.Values["controller"].ToString();
-            //string _action = this.RouteData.Values["action"].ToString();
-            //string _logMessage = $"{_controller}.{_action}({nameof(planUniqueName)}:{planUniqueName},{nameof(planInstanceId)}:{planInstanceId}) from {this.HttpContext.Connection.RemoteIpAddress}.";
             _logger.LogInformation($"Arguments:({nameof(planUniqueName)}:{planUniqueName},{nameof(planInstanceId)}:{planInstanceId}).");
 
             Plan _plan = null;
@@ -319,7 +276,7 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1000, ex, "Exception encountered.");
+                _logger.LogError(ex, "Exception encountered.");
             }
             if (_status == null) //_plan = new Plan();
                 return new EmptyResult();
@@ -347,9 +304,6 @@ namespace ModularUI.Modules.PlanExecution.Controllers
         [HttpPost]
         public async Task<string> StartPlan([FromBody] Newtonsoft.Json.Linq.JObject requestLoad)
         {
-            //string _controller = this.RouteData.Values["controller"].ToString();
-            //string _action = this.RouteData.Values["action"].ToString();
-            //string _logMessage = $"{_controller}.{_action}({nameof(requestLoad)}:{requestLoad.ToString()}) from {this.HttpContext.Connection.RemoteIpAddress}.";
             _logger.LogInformation($"Arguments:({nameof(requestLoad)}:{requestLoad.ToString()}).");
 
             StartPlanParamsVM _startPlanParams = JsonConvert.DeserializeObject<StartPlanParamsVM>(Convert.ToString(requestLoad));
@@ -360,16 +314,13 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1000, ex, "Exception encountered.");
+                _logger.LogError(ex, "Exception encountered.");
             }
             return _instanceId.ToString();
         }
         [HttpPost]
         public async Task CancelPlan(string planUniqueName, long planInstanceId)
         {
-            //string _controller = this.RouteData.Values["controller"].ToString();
-            //string _action = this.RouteData.Values["action"].ToString();
-            //string _logMessage = $"{_controller}.{_action}({nameof(planUniqueName)}:{planUniqueName},{nameof(planInstanceId)}:{planInstanceId}) from {this.HttpContext.Connection.RemoteIpAddress}.";
             _logger.LogInformation($"Arguments:({nameof(planUniqueName)}:{planUniqueName},{nameof(planInstanceId)}:{planInstanceId}).");
 
             try
@@ -378,7 +329,7 @@ namespace ModularUI.Modules.PlanExecution.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1000, ex, "Exception encountered.");
+                _logger.LogError(ex, "Exception encountered.");
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿@using ModularUI.Modules.PlanExecution
+﻿@using Synapse.UI.Modules.PlanExecution
 @using Synapse.Core
 @using Microsoft.AspNetCore.Html
 @using Kendo.Mvc.UI
@@ -17,7 +17,7 @@
                 @(Html.Kendo().Button().Name("btn-reset").Icon("reset").Content("Reset").Events(e => e.Click("SYNAPSEUI.planExec.btnResetClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected, visible: isReset" }))
                 @(Html.Kendo().Button().Name("btn-show-plan-diagram").Content("Show Diagram").HtmlAttributes(new { type = "button", style = "position:absolute; right: 10px;", data_bind = "events:{ click: toggleShowPlanDiagram }, enabled: planSelected" }))
             </div>
-            @(Html.Kendo().TreeList<ModularUI.Modules.PlanExecution.ViewModels.DynamicParametersVM>()
+            @(Html.Kendo().TreeList<Synapse.UI.Modules.PlanExecution.ViewModels.DynamicParametersVM>()
                     .Name("treelist-dynamic-params")
                     .AutoBind(false)
                     .Columns(columns =>
@@ -95,7 +95,7 @@
             <label>Refresh every <span data-bind="text: autoRefreshStatusCountDown"></span> secs</label>&nbsp;
             @(Html.Kendo().Button().Name("btn-refresh-plan-history").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.planExec.btnRefreshPlanHistoryClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
         </div>
-        @(Html.Kendo().Grid<ModularUI.Modules.PlanExecution.ViewModels.PlanHistoryVM>()
+        @(Html.Kendo().Grid<Synapse.UI.Modules.PlanExecution.ViewModels.PlanHistoryVM>()
                         .Name("grid-plan-history")
                         .AutoBind(false)
                         .DataSource(dataSource => dataSource

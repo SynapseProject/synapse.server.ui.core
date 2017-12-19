@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Synapse.Core;
-using ModularUI.Modules.PlanExecution.ViewModels;
+using Synapse.UI.Modules.PlanExecution.ViewModels;
 
-namespace ModularUI.WebApplication
+namespace Synapse.UI.PlanExecution
 {
     public class AutoMapperProfile : Profile
     {
