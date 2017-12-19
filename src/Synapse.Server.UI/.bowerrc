@@ -1,6 +1,0 @@
-{
-  "directory": "wwwroot/lib",
-  "proxy":"http://rsexmwpa001.bp.com:80",
-  "https-proxy":"http://rsexmwpa001.bp.com:80",
-  "strict-ssl": false
-}
