@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+@{ 
+    var statusCode = ViewData["StatusCode"];
+    var statusMsg = "";
+    switch (statusCode)
+    {
+        case 400:
+            statusMsg = "Bad request: The request cannot be fulfilled due to bad syntax";
+            break;
+        case 403:
+            statusMsg = "Forbidden";
+            break;
+        case 404:
+            statusMsg = "Page not found";
+            break;
+        case 408:
+            statusMsg = "The server timed out waiting for the request";
+            break;
+        case 500:
+            statusMsg = "Internal Server Error - server was unable to finish processing the request";
+            break;
+        default:
+            statusMsg = "That’s odd... Something we didn't expect happened";
+            break;
+
+    }
+    }
+<div style="text-align:center;">
+    <h2 style="font-size:4em; margin-top: 60px; line-height:1;">Error @statusCode</h2>
+    <h3 style="font-size:2em; margin-top: 30px; line-height:1;">@statusMsg</h3>
+    <a style="margin-top: 30px;display:block;color:#EB957D;" href="/" title="Back to homepage">Back to homepage</a>
+</div>

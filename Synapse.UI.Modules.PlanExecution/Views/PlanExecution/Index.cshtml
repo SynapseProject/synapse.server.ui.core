@@ -22,8 +22,8 @@
                     .AutoBind(false)
                     .Columns(columns =>
                     {
-                        columns.Add().Field(c => c.ActionName).Width(220);
-                        columns.Add().Field(c => c.ActionGroup).Width(70).HtmlAttributes(new { @style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
+                        columns.Add().Field(c => c.ActionName).Width(220).TemplateId("treelist-dynamic-params-actionname-template");
+                        //columns.Add().Field(c => c.ActionGroup).Width(70).HtmlAttributes(new { @style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
                         columns.Add().Field(c => c.ParameterName).Width(200);
                         columns.Add().Field(c => c.ParameterValue).Width(200).TemplateId("treelist-dynamic-params-override-template");
                         columns.Add().Title("Pass Blank Value?").Width(80).TemplateId("treelist-dynamic-params-pass-blank-template").HtmlAttributes(new { style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
@@ -45,7 +45,7 @@
                         })
                     )
                     .Events(e => e.DataBound("SYNAPSEUI.planExec.treelistDynamicParamsDataBound"))
-                    //.HtmlAttributes(new { style = "width:100%;" })
+            //.HtmlAttributes(new { style = "width:100%;" })
             )
         </div>
         <div id="plan-diagram-container" data-bind="visible: planDiagramIsVisible">
@@ -210,6 +210,14 @@
 </div>
 @(Html.Kendo().Notification().Name("noti").Position(p => { p.Bottom(12); p.Left(12); p.Pinned(true); }).Stacking(NotificationStackingSettings.Up).HideOnClick(false).AutoHideAfter(0).Button(true)
 )
+
+<script id="treelist-dynamic-params-actionname-template" type="text/x-kendo-template">
+    #: ActionName # 
+    # if (ActionGroup == 'Y') { #
+    <span class='superscript'> (g)</span>
+    # } #
+</script>
+
 <script id="treelist-dynamic-params-override-template" type="text/x-kendo-template">
     # if ( ParameterName != null && ParameterName != '' ) { #
     # if (ParameterValueOptions == null || ParameterValueOptions.length == 0 ) { #

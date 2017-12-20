@@ -7,16 +7,13 @@ using Microsoft.Extensions.Configuration;
 using Synapse.UI.Modules.PlanExecution.ViewModels;
 using Synapse.UI.Modules.PlanExecution.Helpers;
 using Synapse.Core;
-using Synapse.Services;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
-using NLog;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
+
 
 namespace Synapse.UI.Modules.PlanExecution.Controllers
 {

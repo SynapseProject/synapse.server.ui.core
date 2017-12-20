@@ -110,18 +110,18 @@ namespace Synapse.UI.WebApplication
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            //env.EnvironmentName = EnvironmentName.Production;
-
+            env.EnvironmentName = EnvironmentName.Production;
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/500");
             }
-            //app.UseStatusCodePages();
-            //app.UseStatusCodePagesWithReExecute("/error/{0}");
+
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
             app.UseStaticFiles();
             //foreach (Assembly assembly in assemblies)

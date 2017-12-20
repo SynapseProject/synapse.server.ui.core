@@ -33,8 +33,6 @@ vertical-align: middle !important;
 .k-button.k-button-icon .k-icon, .k-button.k-button-icontext .k-icon {vertical-align: text-bottom;}  /* default was text-top but doesnt seem to work. somehow setting it to text-bottom works */
 .k-grid-header th.k-header { height: auto; white-space: normal;}
 .k-state-selected > .k-link, .k-panelbar > li > .k-state-selected, .k-panelbar > li.k-state-default > .k-state-selected.k-link {
-    /*background-color: #C7D3A9;
-    color: black;*/
     box-shadow: none;
 }
 .k-dropdown .k-input {vertical-align:middle;}
@@ -96,11 +94,8 @@ body {min-width: 1000px;}  /* min width to maintain readability. this will stop 
     padding: 5px 5px;
 }
 .plan .plan-cell.plan-cell-header {
-    /*display: table-cell;
-    border: 1px solid #ddd;*/
     background-color: #666;
     vertical-align: middle;
-    /*padding: 10px 5px;*/
     color: #fff;
 }
 .plan .plan-cell:nth-child(-n+2) {
@@ -143,6 +138,9 @@ body {min-width: 1000px;}  /* min width to maintain readability. this will stop 
 #diagram-plan {height: 550px;}  /* same height as plan input parameter */
 #diagram-result-plan {height: 250px;}
 
+.superscript {
+    vertical-align: super;
+}
 /*.hide {
     position: absolute !important;
     top: -9999px !important;

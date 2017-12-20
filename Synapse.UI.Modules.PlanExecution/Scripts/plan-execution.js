@@ -30,8 +30,7 @@ SYNAPSEUI.planExec = (function () {
         planDiagramIsVisible: false,
         planInputIsVisible: function () { return !this.get("planDiagramIsVisible");},
         toggleShowPlanDiagram: function () {
-            this.set("planDiagramIsVisible", !this.get("planDiagramIsVisible"));
-            //resizeDiagram($("#diagram-plan").getKendoDiagram());
+            this.set("planDiagramIsVisible", !this.get("planDiagramIsVisible"));            
             resizeDiagram($diagramPlan.getKendoDiagram());
         },
         resultPlanDiagramIsVisible: false,
@@ -555,8 +554,6 @@ SYNAPSEUI.planExec = (function () {
         var dataviz = kendo.dataviz;
         var g = new dataviz.diagram.Group();
         var dataItem = options.dataItem;
-        //var strokeColor = getColor(dataItem.Status); 
-        //var strokeWidth = dataItem.IsActionGroup ? 2 : 1;
         g.append(new dataviz.diagram.Rectangle({
             width: 200,
             height: 75,
@@ -639,13 +636,6 @@ SYNAPSEUI.planExec = (function () {
         } // end for
 
         resizeDiagram(diagram);
-
-        //var viewportRect = diagram.viewport();
-        //var diagramRect = diagram.boundingBox();
-        //var zoom = Math.min(viewportRect.width / (diagramRect.width + 50), viewportRect.height / (diagramRect.height + 50));
-        //zoom = zoom < 1 ? (zoom < 0.5 ? 0.5 : zoom) : 1;        // set zoom level min: 0.5, max: 1
-        //diagram.zoom(zoom, new kendo.dataviz.diagram.Point(viewportRect.x + (viewportRect.width / 2)), viewportRect.y + (viewportRect.height / 2));
-        //diagram.pan(new kendo.dataviz.diagram.Point(0, 0));
         
     };
 
