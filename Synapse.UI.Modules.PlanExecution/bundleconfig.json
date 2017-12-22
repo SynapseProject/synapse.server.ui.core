@@ -2,21 +2,21 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
-    "outputFileName": "Scripts/plan-execution.min.js",
+    "outputFileName": "Styles/plan-execution.min.css",
     // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [
-      "Scripts/plan-execution.js"
+      "Styles/plan-execution.css"
     ]
   },
   {
-    "outputFileName": "Styles/plan-execution.min.css",
+    "outputFileName": "Scripts/plan-execution.min.js",
     "inputFiles": [
-      "Styles/plan-execution.css"
+      "Scripts/plan-execution.js"
     ],
     // Optionally specify minification options
     "minify": {
       "enabled": true,
-      "renameLocals": true
+      "renameLocals": false
     },
     // Optionally generate .map file
     "sourceMap": false

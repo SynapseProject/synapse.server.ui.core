@@ -298,6 +298,31 @@ SYNAPSEUI.planExec = (function () {
             isRegexFilter: $spanFilterType.hasClass("regex-filter")
         };
     };
+    var listboxPlanListDataSourceError = function (e) {
+        //$listboxPlanList.data("kendoListBox").dataSource.data([]);
+        this.data([]);  // "this" is set to the data source instance
+        //console.log(e);
+        // e.status can be null, "timeout", "error", "abort", and "parsererror"
+        // e.errorThrown is the textual portion of the HTTP status
+        if (e) {
+            var msg = "";
+            if (e.xhr.status === 0) {
+                msg = "Not able to connect to the server."
+            } else if (e.status === "timeout") {
+                msg = "The operation timed out.";
+            } else msg = "Status code: " + e.xhr.status + ".";
+            if (e.errors) {
+                $.each(e.errors, function (key, value) {                    
+                    if ('errors' in value) {
+                        $.each(value.errors, function () {
+                            msg += this + "\n";
+                        });
+                    }
+                });
+            }
+            noti.error("Request failed. " + "\n" + msg);
+        }
+    };
     var listboxPlanListChange = function (e) {
         //console.log("listboxPlanListChange is running");
         var pn = $(e.sender.wrapper).find(".k-item.k-state-selected").text();
@@ -644,6 +669,7 @@ SYNAPSEUI.planExec = (function () {
         btnRefreshPlanListClick: btnRefreshPlanListClick,
         listboxPlanListData: listboxPlanListData,
         listboxPlanListChange: listboxPlanListChange,
+        listboxPlanListDataSourceError: listboxPlanListDataSourceError,
         listboxPlanListDataBound: listboxPlanListDataBound,
         tabstripSelect: tabstripSelect,
         gridPlanHistoryData: gridPlanHistoryData,
@@ -666,15 +692,16 @@ SYNAPSEUI.planExec = (function () {
     };
 })();
 
-$.ajaxSetup({
-    timeout: 60000, //Time in milliseconds
-    error: function (xhr) {
-        //kendo.alert(xhr.statusText);
-        //showAlert("Ajax error", xhr.statusText);
-        noti.error(xhr.statusText);
-    }
-});
-$(document).ready(function () {
 
+$(document).ready(function () {
+    $.ajaxSetup({
+        timeout: 60000, //Time in milliseconds
+        error: function (xhr, status, error) {
+            //kendo.alert(xhr.statusText);
+            //showAlert("Ajax error", xhr.statusText);
+            console.log("An error occurred: " + status + "nError: " + error);
+            noti.error(xhr.statusText);
+        }
+    });
     SYNAPSEUI.planExec.init();
 });

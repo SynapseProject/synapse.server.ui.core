@@ -95,7 +95,7 @@
             <label>Refresh every <span data-bind="text: autoRefreshStatusCountDown"></span> secs</label>&nbsp;
             @(Html.Kendo().Button().Name("btn-refresh-plan-history").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.planExec.btnRefreshPlanHistoryClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
         </div>
-        @(Html.Kendo().Grid<Synapse.UI.Modules.PlanExecution.ViewModels.PlanHistoryVM>()
+        @(Html.Kendo().Grid<Synapse.UI.Modules.PlanExecution.ViewModels.PlanHistoryVM>().NoRecords(n => n.Template("No records to display"))
                         .Name("grid-plan-history")
                         .AutoBind(false)
                         .DataSource(dataSource => dataSource
@@ -172,10 +172,10 @@
             <div style="height:100%;">
                 @(Html.Kendo().ListBox().Name("listbox-plan-list")
                 .Selectable(ListBoxSelectable.Single)
-                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "PlanExecution").Data("SYNAPSEUI.planExec.listboxPlanListData")))
+                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "PlanExecution").Data("SYNAPSEUI.planExec.listboxPlanListData")).Events(e => e.Error("SYNAPSEUI.planExec.listboxPlanListDataSourceError")))
                 .Events(e => e
                     .Change("SYNAPSEUI.planExec.listboxPlanListChange")
-                    .DataBound("SYNAPSEUI.planExec.listboxPlanListDataBound"))
+                    .DataBound("SYNAPSEUI.planExec.listboxPlanListDataBound"))                    
                 .HtmlAttributes(new { style = "width: 100%;height:100%;" })
                 )
             </div>

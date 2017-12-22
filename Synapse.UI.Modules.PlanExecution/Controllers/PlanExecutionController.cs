@@ -143,7 +143,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
             {
                 _logger.LogError(ex, "Exception encountered.");
             }
-            if (_parms == null) _parms.Add(new DynamicParametersVM());
+            if (_parms == null) _parms = new List<DynamicParametersVM>();
 
             return Json(await _parms.ToTreeDataSourceResultAsync(request, e => e.ActionId,
                 e => e.ParentActionId,
