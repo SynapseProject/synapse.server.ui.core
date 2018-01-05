@@ -22,8 +22,7 @@
                     .AutoBind(false)
                     .Columns(columns =>
                     {
-                        columns.Add().Field(c => c.ActionName).Width(220).TemplateId("treelist-dynamic-params-actionname-template");
-                        //columns.Add().Field(c => c.ActionGroup).Width(70).HtmlAttributes(new { @style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
+                        columns.Add().Field(c => c.ActionName).Width(220).TemplateId("treelist-dynamic-params-actionname-template");                        
                         columns.Add().Field(c => c.ParameterName).Width(200);
                         columns.Add().Field(c => c.ParameterValue).Width(200).TemplateId("treelist-dynamic-params-override-template");
                         columns.Add().Title("Pass Blank Value?").Width(80).TemplateId("treelist-dynamic-params-pass-blank-template").HtmlAttributes(new { style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
@@ -43,6 +42,7 @@
                             m.Field(f => f.ParameterName);
                             m.Field(f => f.ParameterValue);
                         })
+                        .Events(e => e.Error("SYNAPSEUI.planExec.dataSourceError"))
                     )
                     .Events(e => e.DataBound("SYNAPSEUI.planExec.treelistDynamicParamsDataBound"))
             //.HtmlAttributes(new { style = "width:100%;" })
@@ -95,13 +95,14 @@
             <label>Refresh every <span data-bind="text: autoRefreshStatusCountDown"></span> secs</label>&nbsp;
             @(Html.Kendo().Button().Name("btn-refresh-plan-history").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.planExec.btnRefreshPlanHistoryClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
         </div>
-        @(Html.Kendo().Grid<Synapse.UI.Modules.PlanExecution.ViewModels.PlanHistoryVM>().NoRecords(n => n.Template("No records to display"))
+        @(Html.Kendo().Grid<Synapse.UI.Modules.PlanExecution.ViewModels.PlanHistoryVM>() //.NoRecords(n => n.Template("No records to display"))
                         .Name("grid-plan-history")
                         .AutoBind(false)
                         .DataSource(dataSource => dataSource
                             .Ajax()
                             .ServerOperation(true)
                             .Read(read => read.Action("GetPlanHistoryList", "PlanExecution").Data("SYNAPSEUI.planExec.gridPlanHistoryData").Type(HttpVerbs.Post))
+                            .Events(e => e.Error("SYNAPSEUI.planExec.dataSourceError"))
                             )
                         .Columns(columns =>
                         {
@@ -172,10 +173,10 @@
             <div style="height:100%;">
                 @(Html.Kendo().ListBox().Name("listbox-plan-list")
                 .Selectable(ListBoxSelectable.Single)
-                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "PlanExecution").Data("SYNAPSEUI.planExec.listboxPlanListData")).Events(e => e.Error("SYNAPSEUI.planExec.listboxPlanListDataSourceError")))
+                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "PlanExecution").Data("SYNAPSEUI.planExec.listboxPlanListData")).Events(e => e.Error("SYNAPSEUI.planExec.dataSourceError")))                
                 .Events(e => e
                     .Change("SYNAPSEUI.planExec.listboxPlanListChange")
-                    .DataBound("SYNAPSEUI.planExec.listboxPlanListDataBound"))                    
+                    .DataBound("SYNAPSEUI.planExec.listboxPlanListDataBound"))
                 .HtmlAttributes(new { style = "width: 100%;height:100%;" })
                 )
             </div>
@@ -208,8 +209,9 @@
         </div>
     </div>
 </div>
-@(Html.Kendo().Notification().Name("noti").Position(p => { p.Bottom(12); p.Left(12); p.Pinned(true); }).Stacking(NotificationStackingSettings.Up).HideOnClick(false).AutoHideAfter(0).Button(true)
-)
+@*@(Html.Kendo().Notification().Name("noti").Position(p => { p.Bottom(12); p.Left(12); p.Pinned(true); }).Stacking(NotificationStackingSettings.Up).HideOnClick(false).AutoHideAfter(0).Button(true)
+)*@
+<div id="noti"></div>
 
 <script id="treelist-dynamic-params-actionname-template" type="text/x-kendo-template">
     #: ActionName # 

@@ -13,7 +13,7 @@ SYNAPSEUI.planExec = (function () {
     var $diagramResultPlan = $("#diagram-result-plan");
     var $txtRequestNumber = $("#txt-request-number");
     var $btnShowResultPlanDiagram = $("#btn-show-result-plan-diagram");
-    var noti = null;        // kendo notification widget
+    //var noti = null;        // kendo notification widget
     var autoRefreshStatusId = null;
     
 
@@ -87,7 +87,8 @@ SYNAPSEUI.planExec = (function () {
     var bindUIActions = function () {
         $txtFilter.keyup(function (e) {
             console.log("txt-filter.keyup() is called.", e);
-            $listboxPlanList.data("kendoListBox").dataSource.read();
+            //$listboxPlanList.data("kendoListBox").dataSource.read();
+            refreshPlanList();
         });
     };    
     //var showAlert = function (title, content) {
@@ -109,35 +110,45 @@ SYNAPSEUI.planExec = (function () {
                     // ajax code here
                     refreshPlanHistory();
                 }
-            }            
+            }
         }, 1000);
-    }
+    };
     var stopAutoRefreshStatusCountDown = function () {
         if (autoRefreshStatusId !== null) clearInterval(autoRefreshStatusId);
-    }
+    };
     var clearResultPlan = function () {
         $codeResultPlan.empty().closest("pre").scrollTop(0).scrollLeft(0);
     };
+    var refreshPlanList = function () {
+        $listboxPlanList.data("kendoListBox").dataSource.data([]);
+        $listboxPlanList.data("kendoListBox").dataSource.read();
+    }
     var refreshPlanHistory = function () {
-        if (planVM.get("selectedPlanName") === "") $gridPlanHistory.data("kendoGrid").dataSource.data([]);
-        else $gridPlanHistory.getKendoGrid().dataSource.read();
+        //if (planVM.get("selectedPlanName") === "") $gridPlanHistory.data("kendoGrid").dataSource.data([]);
+        //else $gridPlanHistory.getKendoGrid().dataSource.read();
+        $gridPlanHistory.data("kendoGrid").dataSource.data([]);
+        $gridPlanHistory.getKendoGrid().dataSource.read();
     };
     var refreshPlanDiagram = function () {
-        if (planVM.get("selectedPlanName") === "") $diagramPlan.data("kendoDiagram").dataSource.data([]);
-        else $diagramPlan.getKendoDiagram().dataSource.read();
+        //if (planVM.get("selectedPlanName") === "") $diagramPlan.data("kendoDiagram").dataSource.data([]);
+        //else $diagramPlan.getKendoDiagram().dataSource.read();
+        $diagramPlan.data("kendoDiagram").dataSource.data([]);
+        $diagramPlan.getKendoDiagram().dataSource.read();
     };
     var refreshDynamicParameters = function() {
-        if (planVM.get("selectedPlanName") === "") $treelistDynamicParams.data("kendoTreeList").dataSource.data([]);
-        else $treelistDynamicParams.data("kendoTreeList").dataSource.read();
+        //if (planVM.get("selectedPlanName") === "") $treelistDynamicParams.data("kendoTreeList").dataSource.data([]);
+        //else $treelistDynamicParams.data("kendoTreeList").dataSource.read();
+        $treelistDynamicParams.data("kendoTreeList").dataSource.data([]);
+        $treelistDynamicParams.data("kendoTreeList").dataSource.read();
     };
     var refreshResultPlan = function () {
         $codeResultPlan.empty().closest("pre").scrollTop(0).scrollLeft(0);
         var pn = planVM.get("selectedPlanName");
         var instanceId = planVM.get("selectedInstanceId");
-        if (instanceId === "") {
+        //if (instanceId === "") {
             $diagramResultPlan.data("kendoDiagram").dataSource.data([]);
-        }
-        else {
+        //}
+        //else {
             $.ajax({
                 async: true,
                 method: 'GET',
@@ -147,10 +158,12 @@ SYNAPSEUI.planExec = (function () {
             }).done(function (data, textStatus, xhr) {
                 var c = JSON.stringify(data, null, 4);
                 $codeResultPlan.html(c);
-                }).fail(function (xhr, textStatus, errorThrown) { $codeResultPlan.html("There was a problem reading the file"); });
+            });
+                //.fail(function (xhr, textStatus, errorThrown) { $codeResultPlan.html("There was a problem reading the file"); });
+                //.fail(function (xhr, textStatus, errorThrown) { showNotification(decipherJqXhrError(xhr, textStatus), "error"); });
 
             $diagramResultPlan.getKendoDiagram().dataSource.read();
-        }
+        //}
     };
     var resizeDiagram = function (diagram) {
         var viewportRect = diagram.viewport();
@@ -221,6 +234,7 @@ SYNAPSEUI.planExec = (function () {
             pannable: { key: "none"}
         });
         var diagram = $diagramPlan.getKendoDiagram();
+        diagram.dataSource.bind("error", "dataSourceError");
         diagram.bringIntoView(diagram.shapes);
     };
     var createResultPlanDiagram = function () {
@@ -277,19 +291,21 @@ SYNAPSEUI.planExec = (function () {
             pannable: { key: "none" }
         });
         var diagram = $diagramResultPlan.getKendoDiagram();
+        diagram.dataSource.bind("error", "dataSourceError");
         diagram.bringIntoView(diagram.shapes);
     };
     var init = function () {
         createPlanDiagram();    
         createResultPlanDiagram();
         bindUIActions();        
-        noti = $("#noti").data("kendoNotification");
+        //noti = $("#noti").data("kendoNotification");
         kendo.bind(document.body, planVM);
     };
     // btn-refresh-plan-list
     var btnRefreshPlanListClick = function (e) {
         //console.log("btnRefreshPlanListClick is running");
-        $listboxPlanList.data("kendoListBox").dataSource.read();
+        //$listboxPlanList.data("kendoListBox").dataSource.read();
+        refreshPlanList();
     };    
     // listbox-plan-list
     var listboxPlanListData = function () {
@@ -298,19 +314,13 @@ SYNAPSEUI.planExec = (function () {
             isRegexFilter: $spanFilterType.hasClass("regex-filter")
         };
     };
-    var listboxPlanListDataSourceError = function (e) {
-        //$listboxPlanList.data("kendoListBox").dataSource.data([]);
+    var dataSourceError = function (e) {        
         this.data([]);  // "this" is set to the data source instance
         //console.log(e);
         // e.status can be null, "timeout", "error", "abort", and "parsererror"
         // e.errorThrown is the textual portion of the HTTP status
         if (e) {
-            var msg = "";
-            if (e.xhr.status === 0) {
-                msg = "Not able to connect to the server."
-            } else if (e.status === "timeout") {
-                msg = "The operation timed out.";
-            } else msg = "Status code: " + e.xhr.status + ".";
+            var msg = decipherJqXhrError(e.xhr, e.status);            
             if (e.errors) {
                 $.each(e.errors, function (key, value) {                    
                     if ('errors' in value) {
@@ -320,14 +330,14 @@ SYNAPSEUI.planExec = (function () {
                     }
                 });
             }
-            noti.error("Request failed. " + "\n" + msg);
+            //noti.error("Request failed. " + "\n" + msg);
+            showNotification(msg, "error");
         }
-    };
+    };    
     var listboxPlanListChange = function (e) {
         //console.log("listboxPlanListChange is running");
         var pn = $(e.sender.wrapper).find(".k-item.k-state-selected").text();
-        planVM.set("selectedPlanName", pn);
-        //$("#span-planname").val(pn);
+        planVM.set("selectedPlanName", pn);        
     };
     var listboxPlanListDataBound = function (e) {
         //console.log("listboxPlanListDataBound is running");
@@ -374,7 +384,7 @@ SYNAPSEUI.planExec = (function () {
             // do nothing if already selected
             if (!r.hasClass("k-state-selected")) this.select(r);
         }
-    }
+    };
     // btn-refresh-plan-history
     var btnRefreshPlanHistoryClick = function (e) {
         refreshPlanHistory();
@@ -394,7 +404,7 @@ SYNAPSEUI.planExec = (function () {
     var treelistDynamicParamsDataBound = function (e) {
         //console.log("treelistDynamicParamsDataBound is running");
         $("select.js-dynamic-value").kendoDropDownList();
-    }
+    };
     // btn-execute-plan
     var btnExecutePlanClick = function (e) {
         //console.log("btnExecutePlanClick is running");
@@ -430,22 +440,16 @@ SYNAPSEUI.planExec = (function () {
             }).done(function (data, textStatus, xhr) {
                 var c = JSON.stringify(data, null, 4);
                 if (data === "0")
-                    //kendo.alert("Something is wrong. Execute plan request failed.")
-                    //showAlert("Execute plan", "Something is wrong. Execute plan request failed.");
-                    noti.error("Something is wrong. Execute plan request failed.");
+                    showNotification("Something is wrong. Execute plan request failed.", "error");
                 else {
                     planVM.set("lastExecutedInstanceId", data);
                     planVM.set("isExecute", false);
-                    //kendo.alert("Execute request submitted. Instance id: " + data);                    
-                    //showAlert("Execute plan", "Execute request submitted. Instance id: " + data);
-                    noti.info("Execute request submitted. Instance id: " + data);
+                    showNotification("Execute request submitted. Instance id: " + data, "info");
                 }
-                }).fail(function (xhr, textStatus, errorThrown) {
-                    //kendo.alert("Something is wrong. Execute plan request failed."); 
-                    //showAlert("Execute plan", "Something is wrong. Execute plan request failed.");
-                    noti.error("Something is wrong. Execute plan request failed.");
-                    
-                });
+            });
+                //.fail(function (xhr, textStatus, errorThrown) {
+                //    showNotification("Something is wrong. Execute plan request failed2.", "error");
+                //});
         }
 
     };
@@ -465,11 +469,13 @@ SYNAPSEUI.planExec = (function () {
         }).done(function (data, textStatus, xhr) {
             //kendo.alert("Cancel request submitted. Click refresh to check status"); 
             //showAlert("Cancel plan execution", "Cancel request submitted. Click refresh to check status");            
-            noti.info("Cancel request submitted. Click refresh to check status");
+            //noti.info("Cancel request submitted. Click refresh to check status");
+            showNotification("Cancel request submitted. Click refresh to check status", "info");
             }).fail(function (xhr, textStatus, errorThrown) {
                 //kendo.alert("There was a problem when tryig to cancel the plan");
                 //showAlert("Cancel plan execution", "There was a problem submitting the cancel request");
-                noti.error("There was a problem submiting the cancel request");
+                //noti.error("There was a problem submiting the cancel request");
+                showNotification("There was a problem submiting the cancel request", "error");
             });
     };
     // diagram-plan-diagram
@@ -663,13 +669,50 @@ SYNAPSEUI.planExec = (function () {
         resizeDiagram(diagram);
         
     };
+    var showNotification = function (msg, msgType, allowHideAfter = 10000, autoHideAfter = 15000) {
+        if (msg == null)
+            return;
+        const id = "#noti";
+        var noti = $(id).data("kendoNotification");
+        if (noti) {
+            noti.destroy();
+            $(id).empty();
+        }
+        noti = $(id).kendoNotification({
+            stacking: "up",
+            position: {bottom: 12, left:12},
+            button: true,
+            allowHideAfter: allowHideAfter,
+            autoHideAfter: autoHideAfter,
+            hideOnClick: false
+        }).data("kendoNotification");
+        noti.show(msg, msgType);
+    };
+    var decipherJqXhrError = function (jqXHR, textStatus) {
+        var errorMessage = "";
 
+        if (jqXHR.status === 0) {
+            errorMessage = "Not connected. Please verify network connection.";
+        } else if (jqXHR.status == 404) {
+            errorMessage = "Requested page is not found.";
+        } else if (jqXHR.status == 500) {
+            errorMessage = "Internal Server Error.";
+        } else if (textStatus === "parsererror") {
+            errorMessage = "Requested JSON parse failed.";
+        } else if (textStatus === "timeout") {
+            errorMessage = "Timeout error.";
+        } else if (textStatus === "abort") {
+            errorMessage = "Ajax request aborted.";
+        } else {
+            errorMessage = "Uncaught Error. " + jqXHR.responseText;
+        }
+        return errorMessage;
+    }
     return {
         init: init,
         btnRefreshPlanListClick: btnRefreshPlanListClick,
         listboxPlanListData: listboxPlanListData,
         listboxPlanListChange: listboxPlanListChange,
-        listboxPlanListDataSourceError: listboxPlanListDataSourceError,
         listboxPlanListDataBound: listboxPlanListDataBound,
         tabstripSelect: tabstripSelect,
         gridPlanHistoryData: gridPlanHistoryData,
@@ -688,7 +731,10 @@ SYNAPSEUI.planExec = (function () {
         diagramResultPlanData: diagramResultPlanData,
         diagramResultPlanVisualTemplate: diagramResultPlanVisualTemplate,
         diagramResultPlanDataBound: diagramResultPlanDataBound,
-        btnRefreshResultPlanClick: btnRefreshResultPlanClick
+        btnRefreshResultPlanClick: btnRefreshResultPlanClick,
+        showNotification: showNotification,
+        decipherJqXhrError: decipherJqXhrError,
+        dataSourceError: dataSourceError
     };
 })();
 
@@ -696,11 +742,12 @@ SYNAPSEUI.planExec = (function () {
 $(document).ready(function () {
     $.ajaxSetup({
         timeout: 60000, //Time in milliseconds
-        error: function (xhr, status, error) {
+        error: function (xhr, textStatus, errorThrown) {
             //kendo.alert(xhr.statusText);
             //showAlert("Ajax error", xhr.statusText);
-            console.log("An error occurred: " + status + "nError: " + error);
-            noti.error(xhr.statusText);
+            console.log("AJAX error. Status: " + xhr.status + ". Error thrown: " + errorThrown);
+            //noti.error(xhr.statusText);            
+            SYNAPSEUI.planExec.showNotification(SYNAPSEUI.planExec.decipherJqXhrError(xhr, textStatus), "error");
         }
     });
     SYNAPSEUI.planExec.init();
