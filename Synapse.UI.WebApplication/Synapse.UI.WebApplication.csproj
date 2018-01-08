@@ -45,6 +45,7 @@
   <ItemGroup>
     <None Include="wwwroot\css\reset.css" />
     <None Include="wwwroot\js\webapp.js" />
+    <None Include="wwwroot\js\jquery.ba-throttle-debounce.min.js" />
   </ItemGroup>
 
   <ItemGroup>

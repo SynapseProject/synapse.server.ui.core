@@ -85,18 +85,9 @@ SYNAPSEUI.planExec = (function () {
 
     // private methods
     var bindUIActions = function () {
-        $txtFilter.keyup(function (e) {
-            console.log("txt-filter.keyup() is called.", e);
-            //$listboxPlanList.data("kendoListBox").dataSource.read();
-            refreshPlanList();
-        });
-    };    
-    //var showAlert = function (title, content) {
-    //    $("<div></div>").kendoAlert({
-    //        title: title,
-    //        content: content
-    //    }).data("kendoAlert").open();
-    //}
+        // call function once ONLY after user has stopped typing for 1 sec
+        $txtFilter.on('keyup', $.debounce(1000, function () { refreshPlanList();}));
+    };        
     var startAutoRefreshStatusCountDown = function () {
         planVM.set("autoRefreshStatusCountDown", 60);
         stopAutoRefreshStatusCountDown();
