@@ -742,4 +742,5 @@ $(document).ready(function () {
         }
     });
     SYNAPSEUI.planExec.init();
+    
 });

@@ -29,7 +29,7 @@
                     })
                     .Resizable(true)
                     .Sortable(false)
-                    .Selectable(true)
+                    .Selectable(false)
                     .DataSource(dataSource => dataSource
                         .Read(read => read.Action("GetDynamicParameters", "PlanExecution").Data("SYNAPSEUI.planExec.treelistDynamicParamsData").Type(HttpVerbs.Get))
                         .Model(m =>

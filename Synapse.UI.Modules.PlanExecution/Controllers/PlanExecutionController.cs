@@ -190,30 +190,45 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
         private static void BuildDynamicParametersRecursive(ActionItem actionGroup, int? parentId, ref int id, ref List<DynamicParametersVM> parms)
         {
             int subParentId = 0;
+            int paramsParentId = 0;
             parms.Add(new DynamicParametersVM() { ActionName = actionGroup.Name, ActionGroup = "Y", ActionId = ++id, ParentActionId = parentId });
-            subParentId = id;
+            subParentId = id;        
+            // config parameters
+            if (actionGroup.Handler != null && actionGroup.Handler.HasConfig && actionGroup.Handler.Config.HasDynamic)
+            {
+                parms.Add(new DynamicParametersVM() { ActionName = "Config", ActionId = ++id, ParentActionId = subParentId });
+                paramsParentId = id;
+                foreach (DynamicValue _dv in actionGroup.Handler.Config.Dynamic)
+                {
+                    parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Name, ParameterValueOptions = _dv.Options });
+                }
+            }
+            // action parameters
             if (actionGroup.HasParameters && actionGroup.Parameters.HasDynamic)
             {
+                parms.Add(new DynamicParametersVM() { ActionName = "Parameters", ActionId = ++id, ParentActionId = subParentId });
+                paramsParentId = id;
                 foreach (DynamicValue _dv in actionGroup.Parameters.Dynamic)
                 {
-                    parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = subParentId, ParameterName = _dv.Name, ParameterValueOptions = _dv.Options });
+                    parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Name, ParameterValueOptions = _dv.Options });
                 }
             }
             if (actionGroup.HasActions) BuildDynamicParametersRecursive(actionGroup.Actions, subParentId, ref id, ref parms);
 
         }
         //[HttpGet]
-        public async Task<ActionResult> GetPlanStatus(string planUniqueName, long? planInstanceId = null)
+        //public async Task<ActionResult> GetPlanStatus(string planUniqueName, long? planInstanceId = null)
+        public async Task<ActionResult> GetPlanStatus(string planUniqueName, long planInstanceId)
         {
             _logger.LogInformation($"Argumnets:({nameof(planUniqueName)}:{planUniqueName},{nameof(planInstanceId)}:{planInstanceId}).");
 
             Plan _plan = null;
             try
             {
-                if (planInstanceId == null)
-                    _plan = await _svc.GetPlanAsync(planUniqueName);
-                else
-                    _plan = await _svc.GetPlanStatusAsync(planUniqueName, planInstanceId.GetValueOrDefault());
+                //if (planInstanceId == null)
+                //    _plan = await _svc.GetPlanAsync(planUniqueName);
+                //else
+                    _plan = await _svc.GetPlanStatusAsync(planUniqueName, planInstanceId);
             }
             catch (Exception ex)
             {
