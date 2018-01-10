@@ -97,7 +97,7 @@ SYNAPSEUI.planExec = (function () {
             if (cnt === 0) {
                 planVM.set("autoRefreshStatusCountDown", 60);
                 // any plan selected?
-                if (planVM.get("selectedPlanName") != "") {
+                if (planVM.get("selectedPlanName") !== "") {
                     // ajax code here
                     refreshPlanHistory();
                 }
@@ -133,13 +133,12 @@ SYNAPSEUI.planExec = (function () {
         $treelistDynamicParams.data("kendoTreeList").dataSource.read();
     };
     var refreshResultPlan = function () {
-        $codeResultPlan.empty().closest("pre").scrollTop(0).scrollLeft(0);
+        //$codeResultPlan.empty().closest("pre").scrollTop(0).scrollLeft(0);
+        clearResultPlan();
+        $diagramResultPlan.data("kendoDiagram").dataSource.data([]);
         var pn = planVM.get("selectedPlanName");
         var instanceId = planVM.get("selectedInstanceId");
-        //if (instanceId === "") {
-            $diagramResultPlan.data("kendoDiagram").dataSource.data([]);
-        //}
-        //else {
+        if (pn !== "" && instanceId !== "") {                    
             $.ajax({
                 async: true,
                 method: 'GET',
@@ -154,7 +153,7 @@ SYNAPSEUI.planExec = (function () {
                 //.fail(function (xhr, textStatus, errorThrown) { showNotification(decipherJqXhrError(xhr, textStatus), "error"); });
 
             $diagramResultPlan.getKendoDiagram().dataSource.read();
-        //}
+        }
     };
     var resizeDiagram = function (diagram) {
         var viewportRect = diagram.viewport();

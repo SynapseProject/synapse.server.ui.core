@@ -234,8 +234,9 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
             {
                 _logger.LogError(ex, "Exception encountered.");
             }
-            if (_plan == null) //_plan = new Plan();
-                return new EmptyResult();
+            //if (_plan == null) _plan = new Plan();
+            if (_plan == null) 
+                return Json(new EmptyResult());
             else
             {
                 JsonSerializerSettings _serializerSettings = new JsonSerializerSettings();
