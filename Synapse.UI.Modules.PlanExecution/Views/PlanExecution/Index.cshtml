@@ -216,7 +216,7 @@
 <script id="treelist-dynamic-params-actionname-template" type="text/x-kendo-template">
     #: ActionName # 
     # if (ActionGroup == 'Y') { #
-    <span class='superscript'> (g)</span>
+    <span class='superscript'> G</span>
     # } #
 </script>
 
@@ -239,6 +239,30 @@
     # if ( ParameterName != null && ParameterName != '' ) { #
     @(Html.Kendo().CheckBox().Name("passblank").Label("").HtmlAttributes(new { @class = "js-pass-blank" }))
     # } #
+</script>
+
+<script id="diagram-plan-content-template" type="text/x-kendo-template">
+    <div class="diagram-box oneline">
+        <div>
+            <span>#: Name #</span>
+            # if ( IsActionGroup) { #
+            <span class='superscript'>G</span>
+            @*<sup>G</sup>*@
+            # } #
+        </div>        
+    </div>
+</script>
+
+<script id="diagram-resultplan-content-template" type="text/x-kendo-template">    
+    <div class="diagram-box twolines">
+        <div>
+            <span>#: Name #</span>
+            # if ( IsActionGroup) { #
+            <span class='superscript'>G</span>
+            # } #
+        </div>
+        <div><span>#: StatusText #</span></div>
+    </div>
 </script>
 
 @section Styles {

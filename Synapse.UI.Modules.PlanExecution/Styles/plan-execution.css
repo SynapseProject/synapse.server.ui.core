@@ -13,7 +13,7 @@ input:-ms-input-placeholder { font-style:italic; } /* IE 10+ */
 
 
 /* === bootstrap overrides === */
-pre{border-radius: 0px;}
+pre{border-radius: 0;}
 /* === end of bootstrap overrides === */
 
 /* restore kendo grid css overwritten by bootstrap*/
@@ -145,9 +145,25 @@ body {min-width: 1000px;}  /* min width to maintain readability. this will stop 
 #diagram-plan {height: 550px;}  /* same height as plan input parameter */
 #diagram-result-plan {height: 250px;}
 
+/* sup tag doesnt render well */
 .superscript {
     vertical-align: super;
+    font-size: 0.7em;
 }
+/* used to style plan and result plan diagram box */
+.diagram-box {
+    text-align: center;
+    width: 200px;
+    height: 75px;
+    word-wrap: normal;
+}
+.diagram-box.oneline {
+    padding-top: 1.75em; /* crude way to vertical align */
+}
+.diagram-box.twolines {
+    padding-top: 1.25em; /* crude way to vertical align */
+}
+
 /*.hide {
     position: absolute !important;
     top: -9999px !important;

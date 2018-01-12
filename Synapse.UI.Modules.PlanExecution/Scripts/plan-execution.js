@@ -497,27 +497,41 @@ SYNAPSEUI.planExec = (function () {
                 fill: { color: dataItem.StatusColor }
             }));
         }
-        var layout = new dataviz.diagram.Layout(new dataviz.diagram.Rect(0, 0, 200, 75), {
-            alignContent: "center",
-            alignItems: "center",
-            justifyContent: "center",
-            orientation: "vertical"
-        });
-
-        g.append(layout);
-        layout.append(new dataviz.diagram.TextBlock({
-            text: dataItem.Name,
-            fontSize: 12,
-            fill: "#787878"
-        }));
+        // START - if render simple text
+        //var layout = new dataviz.diagram.Layout(new dataviz.diagram.Rect(0, 0, 200, 75), {
+        //    alignContent: "center",
+        //    alignItems: "center",
+        //    justifyContent: "center",
+        //    orientation: "vertical"
+        //});
+        //g.append(layout);
         //layout.append(new dataviz.diagram.TextBlock({
-        //    text: dataItem.Status,
+        //    text: dataItem.Name,
         //    fontSize: 12,
         //    fill: "#787878"
+        //}));        
+        //layout.reflow();
+        // END - if render simple text
 
-        //}));
-        
-        layout.reflow();
+        // START - flag an action as action group. Append superscript "G" after the action name        
+        // https://docs.telerik.com/kendo-ui/controls/diagrams-and-maps/diagram/how-to/external-content-in-shapes
+        // Compile the shape template
+        var contentTemplate = kendo.template($("#diagram-plan-content-template").html());
+        var renderElement = $("<div />").appendTo("body");
+        renderElement.html(contentTemplate(dataItem));
+
+        // Create a new group that will hold the rendered content        
+        var output = new kendo.drawing.Group();
+        kendo.drawing.drawDOM(renderElement)
+            .then(function (group) {
+                output.append(group);
+
+                // clean up
+                renderElement.remove();
+            });
+
+        g.drawingElement.append(output);
+        // END - START - flag an action as action group. Append superscript "G" after the action name  
 
         return g;
     };
@@ -593,27 +607,47 @@ SYNAPSEUI.planExec = (function () {
                 fill: { color: dataItem.StatusColor }
             }));
         }
-        var layout = new dataviz.diagram.Layout(new dataviz.diagram.Rect(0, 0, 200, 75), {
-            alignContent: "center",
-            alignItems: "center",
-            justifyContent: "center",
-            orientation: "vertical"
-        });
+        // START - if render simple text
+        //var layout = new dataviz.diagram.Layout(new dataviz.diagram.Rect(0, 0, 200, 75), {
+        //    alignContent: "center",
+        //    alignItems: "center",
+        //    justifyContent: "center",
+        //    orientation: "vertical"
+        //});
 
-        g.append(layout);
-        layout.append(new dataviz.diagram.TextBlock({
-            text: dataItem.Name,
-            fontSize: 12,
-            fill: "#787878"
-        }));
-        layout.append(new dataviz.diagram.TextBlock({
-            text: dataItem.StatusText,
-            fontSize: 12,
-            fill: "#787878"
+        //g.append(layout);
+        //layout.append(new dataviz.diagram.TextBlock({
+        //    text: dataItem.Name,
+        //    fontSize: 12,
+        //    fill: "#787878"
+        //}));
+        //layout.append(new dataviz.diagram.TextBlock({
+        //    text: dataItem.StatusText,
+        //    fontSize: 12,
+        //    fill: "#787878"        
+        //}));
+        // layout.reflow();
+        // END - if render simple text
 
-        }));
+        // START - START - flag an action as action group. Append superscript "G" after the action name
+        // https://docs.telerik.com/kendo-ui/controls/diagrams-and-maps/diagram/how-to/external-content-in-shapes
+        // Compile the shape template
+        var contentTemplate = kendo.template($("#diagram-resultplan-content-template").html());
+        var renderElement = $("<div />").appendTo("body");
+        renderElement.html(contentTemplate(dataItem));
 
-        layout.reflow();
+        // Create a new group that will hold the rendered content        
+        var output = new kendo.drawing.Group();
+        kendo.drawing.drawDOM(renderElement)
+            .then(function (group) {
+                output.append(group);
+                
+                // clean up
+                renderElement.remove();
+            });            
+        
+        g.drawingElement.append(output);                
+        // END -         // END - flag action group as superscript "G" after the action name
 
         return g;
     };
@@ -659,7 +693,10 @@ SYNAPSEUI.planExec = (function () {
         resizeDiagram(diagram);
         
     };
-    var showNotification = function (msg, msgType, allowHideAfter = 10000, autoHideAfter = 15000) {
+    //var showNotification = function (msg, msgType, allowHideAfter = 10000, autoHideAfter = 15000) {
+    var showNotification = function (msg, msgType, allowHideAfter, autoHideAfter) {
+        if (allowHideAfter === undefined) allowHideAfter = 10000;
+        if (autoHideAfter === undefined) autoHideAfter = 15000;
         if (msg == null)
             return;
         const id = "#noti";
