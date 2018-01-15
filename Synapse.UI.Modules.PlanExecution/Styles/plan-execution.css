@@ -43,7 +43,7 @@ vertical-align: middle !important;
     line-height: 11px;
 }
 
-.k-listbox .k-list-scroller {border-width:0px;padding:0px;}
+.k-listbox .k-list-scroller {border-width:0;padding:0;}
 
 /* make it behave like treelist */
 .k-grid-norecords {
@@ -52,13 +52,13 @@ vertical-align: middle !important;
 } 
 
 .k-tabstrip-items .k-loading {
-    border-top: 0px; /* this will cause the top border of tab strips to be a thin line rather than a thick line*/
+    border-top: 0; /* this will cause the top border of tab strips to be a thin line rather than a thick line*/
 }
-.k-tabstrip .k-content {border-width: 1px 0 0 0; padding-left:0px; padding-right:0px;}
+.k-tabstrip .k-content {border-width: 1px 0 0 0; padding-left:0; padding-right:0;}
 .k-tabstrip-top .k-tabstrip-items .k-state-active {
     background-color: #7ea700;
     border-bottom-color: transparent;
-    border-bottom-width: 0px;
+    border-bottom-width: 0;
 }
 .k-tabstrip-items .k-item {margin-bottom: -1px;}
 .k-tabstrip-items .k-state-default {border-color: #7ea700;}
@@ -87,7 +87,7 @@ body {min-width: 1000px;}  /* min width to maintain readability. this will stop 
     table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
-    margin: 0px auto;
+    margin: 0 auto;
     height: 710px;
 }
 .plan .plan-row {
@@ -117,7 +117,7 @@ body {min-width: 1000px;}  /* min width to maintain readability. this will stop 
 }
 
 #tabstrip.k-widget {
-    border-width: 0px;
+    border-width: 0;
 }
 
 #treelist-dynamic-params {

@@ -146,8 +146,9 @@ SYNAPSEUI.planExec = (function () {
                 data: { 'planUniqueName': pn, 'planInstanceId': instanceId },
                 dataType: 'json'
             }).done(function (data, textStatus, xhr) {
-                var c = JSON.stringify(data, null, 4);
-                $codeResultPlan.html(c);
+                var c = JSON.stringify(data, null, 4);                
+                //$codeResultPlan.html(c);
+                $codeResultPlan.text(c);
             });
                 //.fail(function (xhr, textStatus, errorThrown) { $codeResultPlan.html("There was a problem reading the file"); });
                 //.fail(function (xhr, textStatus, errorThrown) { showNotification(decipherJqXhrError(xhr, textStatus), "error"); });
@@ -406,7 +407,7 @@ SYNAPSEUI.planExec = (function () {
                 obj.value = obj.value.trim();
                 var $passblank = $(this).closest('tr').find('.js-pass-blank');
                 if (obj.value.length !== 0) {
-                    dyn[obj.name] = obj.value;
+                    dyn[obj.name] = encodeURIComponent(obj.value);
                     $passblank.prop('checked', false);
                 }
                 else {
@@ -417,16 +418,16 @@ SYNAPSEUI.planExec = (function () {
 
             var d = {
                 'PlanUniqueName': pn,
-                'RequestNumber': $txtRequestNumber.val().trim().length === 0 ? null : $txtRequestNumber.val().trim(),
+                'RequestNumber': $txtRequestNumber.val().trim().length === 0 ? null : encodeURIComponent($txtRequestNumber.val().trim()),
                 'DynamicParameters': dyn
-            };
+            };            
             $.ajax({
                 async: true,
                 method: 'POST',
                 url: getActionUrl("StartPlan", "PlanExecution"),
                 contentType: 'application/json',
-                data: JSON.stringify(d), /* d */
-                dataType: 'text'
+                data: JSON.stringify(d), /* escape special characters with encodeURIComponent */
+                dataType: 'text'                
             }).done(function (data, textStatus, xhr) {
                 var c = JSON.stringify(data, null, 4);
                 if (data === "0")
