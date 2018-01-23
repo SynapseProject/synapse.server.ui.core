@@ -31,10 +31,10 @@
     <Content Update="wwwroot\**" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\js\" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <ProjectReference Include="..\Synapse.UI.Infrastructure\Synapse.UI.Infrastructure.csproj" />

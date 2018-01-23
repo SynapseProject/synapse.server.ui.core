@@ -42,17 +42,6 @@
     <ProjectReference Include="..\Synapse.UI.Infrastructure\Synapse.UI.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Shared\" />
-  </ItemGroup>
-
-  <!--<ItemGroup>
-    <Folder Include="Images\" />
-    <Folder Include="Styles\" />
-    <Folder Include="Services\" />
-    <Folder Include="Scripts\" />
-  </ItemGroup>-->
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /e /y /s &quot;$(TargetPath)&quot; &quot;$(SolutionDir)\Synapse.UI.WebApplication\Modules\ModuleA\&quot;" />
   </Target>

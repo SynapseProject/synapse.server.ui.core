@@ -167,7 +167,7 @@
     </div>
     <div class="plan-row">
         <div class="plan-cell">
-            abc
+            
         </div>
         <div class="plan-cell">
             <div style="height:100%;">
@@ -202,15 +202,13 @@
                         items.Add().Text("Help").Content(@<text>@ShowHelpTabContent(null)</text>);
                     })
                     .Animation(false)
-    @*.HtmlAttributes(new { style = "height: 90%;" })*@
                     .Events(e => e.Select("SYNAPSEUI.planExec.tabstripSelect"))
                 )
             </div>
         </div>
     </div>
 </div>
-@*@(Html.Kendo().Notification().Name("noti").Position(p => { p.Bottom(12); p.Left(12); p.Pinned(true); }).Stacking(NotificationStackingSettings.Up).HideOnClick(false).AutoHideAfter(0).Button(true)
-)*@
+
 <div id="noti"></div>
 
 <script id="treelist-dynamic-params-actionname-template" type="text/x-kendo-template">
