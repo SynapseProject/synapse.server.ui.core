@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Synapse.UI.Modules.ModuleA.Services;
+using Synapse.Common;
 
 namespace Synapse.UI.Modules.ModuleA.Controllers
 {

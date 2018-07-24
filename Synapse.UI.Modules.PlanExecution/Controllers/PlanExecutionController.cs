@@ -169,7 +169,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
                     paramsParentId = id;
                     foreach (DynamicValue _dv in _ai.Handler.Config.Dynamic)
                     {
-                        parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Name, ParameterValueOptions = _dv.Options });
+                        parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Source, ParameterValueOptions = _dv.Options });
                     }
                 }
                 // action parameters
@@ -179,7 +179,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
                     paramsParentId = id;
                     foreach (DynamicValue _dv in _ai.Parameters.Dynamic)
                     {
-                        parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Name, ParameterValueOptions = _dv.Options });
+                        parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Source, ParameterValueOptions = _dv.Options });
                     }
                 }
                 if (_ai.HasActionGroup) BuildDynamicParametersRecursive(_ai.ActionGroup, subParentId, ref id, ref parms);
@@ -200,7 +200,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
                 paramsParentId = id;
                 foreach (DynamicValue _dv in actionGroup.Handler.Config.Dynamic)
                 {
-                    parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Name, ParameterValueOptions = _dv.Options });
+                    parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Source, ParameterValueOptions = _dv.Options });
                 }
             }
             // action parameters
@@ -210,7 +210,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
                 paramsParentId = id;
                 foreach (DynamicValue _dv in actionGroup.Parameters.Dynamic)
                 {
-                    parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Name, ParameterValueOptions = _dv.Options });
+                    parms.Add(new DynamicParametersVM() { ActionName = "", ActionId = ++id, ParentActionId = paramsParentId, ParameterName = _dv.Source, ParameterValueOptions = _dv.Options });
                 }
             }
             if (actionGroup.HasActions) BuildDynamicParametersRecursive(actionGroup.Actions, subParentId, ref id, ref parms);
