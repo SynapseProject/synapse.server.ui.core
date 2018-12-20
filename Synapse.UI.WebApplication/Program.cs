@@ -16,12 +16,12 @@ namespace Synapse.UI.WebApplication
             {
                 logger.Info("Starting web host");
                 var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                //.UseIISIntegration()
-                .UseNLog() // NLog: setup NLog for Dependency injection
-                .UseStartup<Startup>()                
-                .Build();
+                    .UseKestrel()
+                    .UseContentRoot(Directory.GetCurrentDirectory())
+                    //.UseIISIntegration()
+                    .UseNLog() // NLog: setup NLog for Dependency injection
+                    .UseStartup<Startup>()                
+                    .Build();
 
                 host.Run();
             }

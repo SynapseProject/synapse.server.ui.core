@@ -110,7 +110,8 @@ namespace Synapse.UI.WebApplication
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            env.EnvironmentName = EnvironmentName.Production;
+            //env.EnvironmentName = EnvironmentName.Production;
+            env.EnvironmentName = EnvironmentName.Development; 
             
             if (env.IsDevelopment())
             {
@@ -118,9 +119,11 @@ namespace Synapse.UI.WebApplication
             }
             else
             {
-                app.UseExceptionHandler("/Error/500");
+                // Handle application exception
+                app.UseExceptionHandler("/Error/999");
+                
             }
-
+            // handles http status code is between 400 and 600 so long as no response body has already been generated.
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
             app.UseStaticFiles();

@@ -1,8 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.Web" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web" ToolsVersion="15.0">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>  
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <!-- 
+      the next 2 lines are really important for embedded resource to work
+      https://github.com/dotnet/core-setup/issues/2113#issuecomment-335917500 
+    -->
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
     <AssemblyName>Synapse.UI.WebApplication</AssemblyName>
     <ApplicationIcon />
     <OutputType>Exe</OutputType>

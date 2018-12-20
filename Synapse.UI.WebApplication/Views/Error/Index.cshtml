@@ -22,7 +22,8 @@
             statusMsg = "Internal Server Error - server was unable to finish processing the request";
             break;
         default:
-            statusMsg = "That’s odd... Something we didn't expect happened";
+            statusCode = 500;
+            statusMsg = "Sorry...Something we didn't expect happened";
             break;
 
     }
