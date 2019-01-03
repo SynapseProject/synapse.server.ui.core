@@ -111,9 +111,9 @@ SYNAPSEUI.planExec = (function () {
         $codeResultPlan.empty().closest("pre").scrollTop(0).scrollLeft(0);
     };
     var refreshPlanList = function () {
-        $listboxPlanList.data("kendoListBox").dataSource.data([]);
-        $listboxPlanList.data("kendoListBox").dataSource.read();
-    }
+        $listboxPlanList.data( "kendoListBox" ).dataSource.data( [] );
+        $listboxPlanList.data( "kendoListBox" ).dataSource.read();
+    };
     var refreshPlanHistory = function () {
         //if (planVM.get("selectedPlanName") === "") $gridPlanHistory.data("kendoGrid").dataSource.data([]);
         //else $gridPlanHistory.getKendoGrid().dataSource.read();

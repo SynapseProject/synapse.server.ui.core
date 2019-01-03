@@ -24,6 +24,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
         private readonly ILogger<PlanExecution> _logger;
         private readonly IMapper _mapper;
         private Synapse.Services.ControllerServiceHttpApiClient _svc;
+        JsonSerializerSettings _defaultJsonSerializerSettings = new JsonSerializerSettings();
 
         public PlanExecution(IConfiguration configuration, ILogger<PlanExecution> logger, IMapper mapper)
         {
@@ -81,7 +82,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
 
                 _planList = new List<string>();
             }
-            return Json(_planList);
+            return Json(_planList, _defaultJsonSerializerSettings);
         }
         [HttpPost]
         public async Task<ActionResult> GetPlanHistoryList([DataSourceRequest] DataSourceRequest request, string planUniqueName, int showNRecs)
@@ -114,9 +115,9 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
                 _logger.LogError(ex, "Exception encountered.");
             }
             if (_planHistoryList == null)
-                return Json(new List<PlanHistoryVM>());
+                return Json(new List<PlanHistoryVM>(), _defaultJsonSerializerSettings);
             else
-                return Json(_planHistoryList.ToDataSourceResult(request));
+                return Json(_planHistoryList.ToDataSourceResult(request), _defaultJsonSerializerSettings );
 
         }
         [HttpGet]
@@ -147,7 +148,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
 
             return Json(await _parms.ToTreeDataSourceResultAsync(request, e => e.ActionId,
                 e => e.ParentActionId,
-                e => e));
+                e => e), _defaultJsonSerializerSettings);
         }
         private static void BuildDynamicParametersRecursive(List<ActionItem> actions, ref List<DynamicParametersVM> parms)
         {
@@ -269,7 +270,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
             if (_status == null) //_plan = new Plan();
                 return new EmptyResult();
             else
-                return Json(_status);
+                return Json(_status, _defaultJsonSerializerSettings);
         }
         [HttpGet]
         public async Task<ActionResult> GetResultPlanForDiagram(string planUniqueName, long planInstanceId)
@@ -294,7 +295,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
             if (_status == null) //_plan = new Plan();
                 return new EmptyResult();
             else
-                return Json(_status);
+                return Json(_status, _defaultJsonSerializerSettings);
         }
         public List<PlanStatusVM> MoveActionGroupToActionsRecursive(List<PlanStatusVM> actions)
         {

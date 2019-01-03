@@ -63,37 +63,37 @@
         @<text>
         <div style="margin-bottom:3px; padding:5px;background-color: #666;color:#fff;">
             <label>Show n records:</label>&nbsp;
-            @(Html.Kendo().DropDownList().Name("ddl-show-n-recs")
-                    .DataTextField("Text")
-                    .DataValueField("Value")
-                    .BindTo(new List<SelectListItem>() {
-                        new SelectListItem() {
-                        Text = "5",
-                        Value = "5"
-                        },
-                        new SelectListItem() {
-                        Text = "25",
-                        Value = "25"
-                        },
-                        new SelectListItem() {
-                        Text = "50",
-                        Value = "50"
-                        },
-                        new SelectListItem() {
-                        Text = "All",
-                        Value = "0"
-                        }
-                    })
-                    .HtmlAttributes(new
-                    {
-                        style = "width: auto;",
-                        data_bind = "value: showNRecs"
-                    })
+            @(Html.Kendo().DropDownList().Name( "ddl-show-n-recs" )
+                        .DataTextField( "Text" )
+                        .DataValueField( "Value" )
+                        .BindTo( new List<SelectListItem>() {
+                    new SelectListItem() {
+                    Text = "5",
+                    Value = "5"
+                    },
+                    new SelectListItem() {
+                    Text = "25",
+                    Value = "25"
+                    },
+                    new SelectListItem() {
+                    Text = "50",
+                    Value = "50"
+                    },
+                    new SelectListItem() {
+                    Text = "All",
+                    Value = "0"
+                    }
+                        } )
+                        .HtmlAttributes( new
+                        {
+                            style = "width: auto;",
+                            data_bind = "value: showNRecs"
+                        } )
             )
             &nbsp;
-            @(Html.Kendo().CheckBox().Name("chk-auto-refresh-status").HtmlAttributes(new { style = "vertical-align: middle;", data_bind = "checked:autoRefreshStatus, events:{ change: autoRefreshStatusChange }" }) )
-            <label>Refresh every <span data-bind="text: autoRefreshStatusCountDown"></span> secs</label>&nbsp;
-            @(Html.Kendo().Button().Name("btn-refresh-plan-history").Icon("refresh").Content("Refresh").Events(e => e.Click("SYNAPSEUI.planExec.btnRefreshPlanHistoryClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected" }))
+            <input id="chk-auto-refresh-status" type="checkbox" class="k-checkbox" data-bind="checked: autoRefreshStatus, enabled: planSelected, events: {  change: autoRefreshStatusChange }" />
+            <label class="k-checkbox-label" for="chk-auto-refresh-status" style="vertical-align: middle;">Refresh every <span data-bind="text: autoRefreshStatusCountDown"></span> secs</label>&nbsp;
+            @(Html.Kendo().Button().Name( "btn-refresh-plan-history" ).Icon( "refresh" ).Content( "Refresh" ).Events( e => e.Click( "SYNAPSEUI.planExec.btnRefreshPlanHistoryClick" ) ).HtmlAttributes( new { type = "button", data_bind = "enabled: planSelected" } ))
         </div>
         @(Html.Kendo().Grid<Synapse.UI.Modules.PlanExecution.ViewModels.PlanHistoryVM>() //.NoRecords(n => n.Template("No records to display"))
                         .Name("grid-plan-history")

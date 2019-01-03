@@ -1,23 +1,24 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <script>document.documentElement.className += 'no-fouc'</script>
     <meta charset="utf-8" />
-    <title>@Html.Raw(this.ViewBag.Title as string)</title>
+    <title>@Html.Raw( this.ViewBag.Title as string )</title>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    
+
     <base href="@Url.Content("~/")">
     <link rel="icon" href="@Url.Content("~/img/synapse-logo.png")" />
 
-    <link href="https://kendo.cdn.telerik.com/2017.2.621/styles/kendo.common.min.css" rel="stylesheet" type="text/css" />
-    <link href="https://kendo.cdn.telerik.com/2017.2.621/styles/kendo.metro.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://kendo.cdn.telerik.com/2018.2.516/styles/kendo.common.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://kendo.cdn.telerik.com/2018.2.516/styles/kendo.metro.min.css" rel="stylesheet" type="text/css" />
 
-    <script src="https://kendo.cdn.telerik.com/2017.2.621/js/jquery.min.js"></script>    
-    <script src="https://kendo.cdn.telerik.com/2017.2.621/js/kendo.all.min.js"></script>
-    <script src="https://kendo.cdn.telerik.com/2017.2.621/js/kendo.aspnetmvc.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2018.2.516/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2018.2.516/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2018.2.516/js/kendo.aspnetmvc.min.js"></script>
 
     <link href="~/css/reset.min.css" rel="stylesheet" />
     <link href="~/css/layout.min.css" rel="stylesheet" />
-    @RenderSection("Styles", false)
+    @RenderSection( "Styles", false )
 </head>
 <body>
     <div id="s-wrapper">

@@ -13,7 +13,7 @@ using System.IO;
 using System.Runtime.Loader;
 using Synapse.UI.Infrastructure;
 using AutoMapper;
-using Microsoft.CodeAnalysis;
+//using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyModel;
 
 namespace Synapse.UI.WebApplication
@@ -51,24 +51,28 @@ namespace Synapse.UI.WebApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            this.logger.LogInformation("Running ConfigureServices...");
+            this.logger.LogInformation( "Running ConfigureServices..." );
 
-            LoadModulesFromConfig(assemblies, menuItems);
+            LoadModulesFromConfig( assemblies, menuItems );
 
-            // if for some reason we add a reference (for testing purposes) to the module project instead ModuleManager still need to be made aware of it
+            // if for some reason we add a reference (for testing purposes) to the module project instead of using ModuleManager to load, the ModuleManager still need to be made aware of it
             // Get modules from Dependency Context
-            if (HostingEnvironment.IsDevelopment())                
-                LoadModulesFromDependencyContext(assemblies);
-            
-            ModuleManager.SetAssemblies(assemblies.Where(a => a.FullName.ToUpper().Contains("MODULES.")));            
-            Menu.SetItems(menuItems);
+            //if( HostingEnvironment.IsDevelopment() )
+            //    LoadModulesFromDependencyContext( assemblies );
+
+            ModuleManager.SetAssemblies( assemblies.Where( a => a.FullName.ToUpper().Contains( "MODULES." ) ) );
+            Menu.SetItems( menuItems );
 
             // Add framework services.
             var mvcBuilder = services
                                 .AddMvc()
                                 // Maintain property names during serialization. See:
                                 // https://github.com/aspnet/Announcements/issues/194
-                                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());                                
+                                .AddJsonOptions( options =>
+                                {
+                                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                                    options.SerializerSettings.Converters.Add( new Newtonsoft.Json.Converters.StringEnumConverter() );
+                                } );        
 
             foreach (var assembly in assemblies)
             {
@@ -147,15 +151,16 @@ namespace Synapse.UI.WebApplication
             });
 
             // Configure Kendo UI
-            app.UseKendo(env);
-            
+            // only required for versions prior to R2 2018
+            // app.UseKendo(env);
+
         }
 
         private void LoadModulesFromConfig(List<Assembly> assemblies, List<MenuItem> menuItems)
         {
             ModulesSettings modulesSettings = new ModulesSettings();
             modulesSettings = Configuration.GetSection("Modules").Get<ModulesSettings>();
-            string folderPath = null;            
+            string folderPath = null;
 
             if (string.IsNullOrEmpty(modulesSettings.RootPath))
             {
@@ -168,42 +173,45 @@ namespace Synapse.UI.WebApplication
                 this.logger.LogWarning("Loading assemblies from path '{0}' skipped: root path not found", modulesRootPath);
                 return;
             }
-            foreach (var f in modulesSettings.Include)
+            if( modulesSettings.Include != null )
             {
-                // folder directory valid?
-                folderPath = $@"{modulesRootPath}\{f.FolderName}";
-                if (!Directory.Exists(folderPath))
+                foreach( var f in modulesSettings.Include )
                 {
-                    this.logger.LogWarning("Loading assemblies from path '{0}' skipped: module folder path not found", folderPath);                
-                    return;
-                }
-                foreach (string m in Directory.EnumerateFiles(folderPath, "*.dll"))
-                {
-                    // already loaded?
-                    // cant find a way to get all loaded assemblies so only check the ones we manually load
-                    Assembly assembly = assemblies.FirstOrDefault(a => a.FullName.Equals(AssemblyLoadContext.GetAssemblyName(m).FullName));
-                    //Assembly assembly = null;
-                    if (assembly == null)
-                    {                        
-                        try
-                        {
-                            assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(m);
-                            this.logger.LogInformation($@"Loading assembly {m} successful");
-                        }
-                        catch (Exception e)
-                        {
-                            this.logger.LogError($@"Loading assembly {m} failed: {e.Message}");
-                            throw;
-                        }
-                        if (assembly != null)
-                        {
-                            assemblies.Add(assembly);
-                        }
+                    // folder directory valid?
+                    folderPath = $@"{modulesRootPath}\{f.FolderName}";
+                    if( !Directory.Exists( folderPath ) )
+                    {
+                        this.logger.LogWarning( "Loading assemblies from path '{0}' skipped: module folder path not found", folderPath );
+                        return;
                     }
-                    else this.logger.LogWarning($@"Loading assembly {m} skipped: Assembly already loaded");
+                    foreach( string m in Directory.EnumerateFiles( folderPath, "*.dll" ) )
+                    {
+                        // already loaded?
+                        // cant find a way to get all loaded assemblies so only check the ones we manually load
+                        Assembly assembly = assemblies.FirstOrDefault( a => a.FullName.Equals( AssemblyLoadContext.GetAssemblyName( m ).FullName ) );
+                        //Assembly assembly = null;
+                        if( assembly == null )
+                        {
+                            try
+                            {
+                                assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath( m );
+                                this.logger.LogInformation( $@"Loading assembly {m} successful" );
+                            }
+                            catch( Exception e )
+                            {
+                                this.logger.LogError( $@"Loading assembly {m} failed: {e.Message}" );
+                                throw;
+                            }
+                            if( assembly != null )
+                            {
+                                assemblies.Add( assembly );
+                            }
+                        }
+                        else this.logger.LogWarning( $@"Loading assembly {m} skipped: Assembly already loaded" );
 
+                    }
+                    menuItems.Add( new MenuItem { Name = f.FriendlyName, Url = f.Url } );
                 }
-                menuItems.Add(new MenuItem { Name = f.FriendlyName, Url = f.Url });
             }
             
         }
