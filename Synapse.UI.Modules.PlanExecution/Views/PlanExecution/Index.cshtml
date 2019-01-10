@@ -17,36 +17,39 @@
                 @(Html.Kendo().Button().Name("btn-reset").Icon("reset").Content("Reset").Events(e => e.Click("SYNAPSEUI.planExec.btnResetClick")).HtmlAttributes(new { type = "button", data_bind = "enabled: planSelected, visible: isReset" }))
                 @(Html.Kendo().Button().Name("btn-show-plan-diagram").Content("Show Diagram").HtmlAttributes(new { type = "button", style = "position:absolute; right: 10px;", data_bind = "events:{ click: toggleShowPlanDiagram }, enabled: planSelected" }))
             </div>
-            @(Html.Kendo().TreeList<Synapse.UI.Modules.PlanExecution.ViewModels.DynamicParametersVM>()
-                    .Name("treelist-dynamic-params")
-                    .AutoBind(false)
-                    .Columns(columns =>
-                    {
-                        columns.Add().Field(c => c.ActionName).Width(220).TemplateId("treelist-dynamic-params-actionname-template");                        
-                        columns.Add().Field(c => c.ParameterName).Width(200);
-                        columns.Add().Field(c => c.ParameterValue).Width(200).TemplateId("treelist-dynamic-params-override-template");
-                        columns.Add().Title("Pass Blank Value?").Width(80).TemplateId("treelist-dynamic-params-pass-blank-template").HtmlAttributes(new { style = "text-align:center" }).HeaderAttributes(new { @style = "text-align:center" });
-                    })
-                    .Resizable(true)
-                    .Sortable(false)
-                    .Selectable(false)
-                    .DataSource(dataSource => dataSource
-                        .Read(read => read.Action("GetDynamicParameters", "PlanExecution").Data("SYNAPSEUI.planExec.treelistDynamicParamsData").Type(HttpVerbs.Get))
-                        .Model(m =>
-                        {
-                            m.Expanded(true);
-                            m.Id(f => f.ActionId);
-                            m.ParentId(f => f.ParentActionId);
-                            m.Field(f => f.ActionName);
-                            m.Field(f => f.ActionGroup);
-                            m.Field(f => f.ParameterName);
-                            m.Field(f => f.ParameterValue);
-                        })
-                        .Events(e => e.Error("SYNAPSEUI.planExec.dataSourceError"))
-                    )
-                    .Events(e => e.DataBound("SYNAPSEUI.planExec.treelistDynamicParamsDataBound"))
-            //.HtmlAttributes(new { style = "width:100%;" })
-            )
+            <div id="dyn-parm-editor">
+                @(Html.Kendo().TreeList<Synapse.UI.Modules.PlanExecution.ViewModels.DynamicParameterVM>()
+                            .Name( "treelist-dynamic-parms" )
+                            .AutoBind( false )
+                            .Columns( columns =>
+                            {
+                                columns.Add().Field( c => c.ActionName ).Width( 200 ).TemplateId( "treelist-dynamic-parms-actionname-template" );
+                                columns.Add().Field( c => c.Source );
+                                columns.Add().Field( c => c.DataType );
+                                columns.Add().Field( c => c.Validation );
+                                columns.Add().Title( "Value" ).Width( 200 ).TemplateId( "treelist-dynamic-parms-override-template" );
+                                columns.Add().Title( "Pass Blank Value?" ).Width( 80 ).TemplateId( "treelist-dynamic-parms-pass-blank-template" ).HtmlAttributes( new { style = "text-align:center" } ).HeaderAttributes( new { @style = "text-align:center" } );
+                            } )
+                            .Resizable( true )
+                            .Sortable( false )
+                            .Selectable( false )
+                            .DataSource( dataSource => dataSource
+                                 .Read( read => read.Action( "GetDynamicParameters", "PlanExecution" ).Data( "SYNAPSEUI.planExec.treelistDynamicParmsData" ).Type( HttpVerbs.Get ) )
+                                 .Model( m =>
+                                 {
+                                     m.Expanded( true );
+                                     m.Id( f => f.Id );
+                                     m.ParentId( f => f.ParentId );
+                                     m.Field( f => f.ActionName );
+                                     m.Field( f => f.IsActionGroup );
+                                     m.Field( f => f.Source );
+                                 } )
+                                .Events( e => e.Error( "SYNAPSEUI.planExec.treelistDynamicParmsDataSourceError" ) )
+                            )
+                            .Events( e => e.DataBound( "SYNAPSEUI.planExec.treelistDynamicParmsDataBound" ) )
+                //.HtmlAttributes(new { style = "width:100%;" })
+                )
+            </div>
         </div>
         <div id="plan-diagram-container" data-bind="visible: planDiagramIsVisible">
             <div style="margin-bottom:3px;padding:5px;background-color: #666;color:#fff;">
@@ -102,7 +105,6 @@
                             .Ajax()
                             .ServerOperation(true)
                             .Read(read => read.Action("GetPlanHistoryList", "PlanExecution").Data("SYNAPSEUI.planExec.gridPlanHistoryData").Type(HttpVerbs.Post))
-                            .Events(e => e.Error("SYNAPSEUI.planExec.dataSourceError"))
                             )
                         .Columns(columns =>
                         {
@@ -118,8 +120,8 @@
                         //.Scrollable(scr => scr.Enabled(true).Height(250))
                         .Scrollable(scr => scr.Enabled(true))
                         .Resizable(resize => resize.Columns(true))
-                        //.HtmlAttributes(new { style = "height:200px;margin-bottom: 3px;" })
-                        
+        //.HtmlAttributes(new { style = "height:200px;margin-bottom: 3px;" })
+
         )
 
         <div style="margin-bottom:3px; padding: 5px; background-color: #666;color:#fff; position:relative;">
@@ -173,7 +175,7 @@
             <div style="height:100%;">
                 @(Html.Kendo().ListBox().Name("listbox-plan-list")
                 .Selectable(ListBoxSelectable.Single)
-                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "PlanExecution").Data("SYNAPSEUI.planExec.listboxPlanListData")).Events(e => e.Error("SYNAPSEUI.planExec.dataSourceError")))                
+                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "PlanExecution").Data("SYNAPSEUI.planExec.listboxPlanListData")))                
                 .Events(e => e
                     .Change("SYNAPSEUI.planExec.listboxPlanListChange")
                     .DataBound("SYNAPSEUI.planExec.listboxPlanListDataBound"))
@@ -211,34 +213,55 @@
 
 <div id="noti"></div>
 
-<script id="treelist-dynamic-params-actionname-template" type="text/x-kendo-template">
+<script id="treelist-dynamic-parms-actionname-template" type="text/x-kendo-template">
     #: ActionName # 
-    # if (ActionGroup == 'Y') { #
+    # if ( IsActionGroup ) { #
     <span class='superscript'> G</span>
     # } #
 </script>
 
-<script id="treelist-dynamic-params-override-template" type="text/x-kendo-template">
-    # if ( ParameterName != null && ParameterName != '' ) { #
-    # if (ParameterValueOptions == null || ParameterValueOptions.length == 0 ) { #
-    @*<input type='text' name='override[#= ActionId #]' value='' class="k-textbox"/>*@
-    <input type='text' name=#: ParameterName # value='' class="k-textbox js-dynamic-value" />
+@*<script id="treelist-dynamic-parms-override-template" type="text/x-kendo-template">
+    # if ( Name != null && Name != '' ) { #
+    # if ( Options == null || Options.length == 0 ) { #
+    <input type='text' name=#:Name# value='' class="k-textbox js-dynamic-value" />
     # } else { #
-    <select name=#: ParameterName # class="js-dynamic-value">
+    <select name=#:Name# class="js-dynamic-value">
         <option value="" selected="selected"></option>
-        # for (var i = 0; i < ParameterValueOptions.length; i++) { #
-        <option value=#: ParameterValueOptions[i].Key #>#= ParameterValueOptions[i].Value #</option>
+        # for ( var i = 0; i < Options.length; i++ ) { #
+        <option value=#: Options[i].Key #>#= Options[i].Value #</option>
         # } #
     </select>
     # } #
     # } #
-</script>
-<script id="treelist-dynamic-params-pass-blank-template" type="text/x-kendo-template">
-    # if ( ParameterName != null && ParameterName != '' ) { #
-    @(Html.Kendo().CheckBox().Name("passblank").Label("").HtmlAttributes(new { @class = "js-pass-blank" }))
+</script>*@
+<script id="treelist-dynamic-parms-override-template" type="text/x-kendo-template">
+    # if ( Source != null && Source != '' && Editable ) { #
+    #   if ( Options == null || Options.length == 0 ) { #
+    #     var pattern = Validation == null ? "" : "pattern=" + Validation.replace(/'/g, "\x27").replace(/"/g, "\x22") + ' validationMessage="Failed validation rule ' + Validation.replace(/"/g, "&quot;") + '"' #
+    <input type='text' name=#:Source# value='' class="k-textbox js-dynamic-value" #=pattern# />
+    #   } else { #
+    # var dataRole = RestrictToOptions ? "dropdownlist" : "combobox" #
+    <select name=#:Source# class="js-dynamic-value" data-role=#:dataRole#>
+        <option value=""></option>
+        # for ( var i = 0; i < Options.length; i++ ) { #
+        # var selected = Options[i].IsDefault ? "selected" : "" #
+        <option value=#:Options[i].Key# #:selected#>#= Options[i].Value #</option>
+        # } #
+    </select>
+    # } #
+    <span class="k-invalid-msg" data-for=#:Source#></span>
     # } #
 </script>
-
+<script id="treelist-dynamic-parms-pass-blank-template" type="text/x-kendo-template">
+    # if ( Source != null && Source != '' && Editable ) { #
+    @(Html.Kendo().CheckBox().Name( "passblank#:Source#" ).Label( "" ).HtmlAttributes( new { @class = "js-pass-blank" } ))
+    # } #
+</script>
+<script type="text/kendo-template" id="val-msg">
+    <span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+        <span class="k-icon k-i-warning"> </span>#=message#
+    </span>
+</script>
 <script id="diagram-plan-content-template" type="text/x-kendo-template">
     <div class="diagram-box oneline">
         <div>
@@ -255,7 +278,7 @@
     <div class="diagram-box twolines">
         <div>
             <span>#: Name #</span>
-            # if ( IsActionGroup) { #
+            # if ( IsActionGroup ) { #
             <span class='superscript'>G</span>
             # } #
         </div>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Synapse.UI.Modules.PlanExecution.ViewModels
 {
-    public class StartPlanParamsVM
+    public class StartPlanParmsVM
     {
         public string PlanUniqueName { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

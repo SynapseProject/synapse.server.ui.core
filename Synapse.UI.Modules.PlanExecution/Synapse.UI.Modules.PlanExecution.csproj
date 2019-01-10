@@ -12,6 +12,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Styles\**\*.min.css;Views\**;Images\**;Scripts\**\*.min.js;" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\plan-execution.min.js" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />

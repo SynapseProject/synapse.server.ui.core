@@ -63,6 +63,10 @@ vertical-align: middle !important;
 .k-tabstrip-items .k-item {margin-bottom: -1px;}
 .k-tabstrip-items .k-state-default {border-color: #7ea700;}
 .k-tabstrip-top .k-tabstrip-items .k-state-active .k-link {color: #fff;}
+
+.k-tooltip {
+    text-align: left;
+}
 /* === end of kendo overrides === */
 
 body {min-width: 1000px;}  /* min width to maintain readability. this will stop elements from wrapping */
@@ -115,12 +119,13 @@ body {min-width: 1000px;}  /* min width to maintain readability. this will stop 
 #tabstrip .k-tabstrip-items {
     padding-top: 0;
 }
-
 #tabstrip.k-widget {
     border-width: 0;
 }
-
-#treelist-dynamic-params {
+#treelist-dynamic-parms button.k-request-retry {
+    display:none; /* hide the retry button as we also need to do retry for on other widgets, not just the treelist */
+}
+#treelist-dynamic-parms {
     height: 550px;
 }
 #grid-plan-history {
