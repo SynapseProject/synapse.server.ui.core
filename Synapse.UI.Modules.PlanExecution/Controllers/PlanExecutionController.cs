@@ -43,10 +43,9 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
             //return Unauthorized(); // return BadRequest(); // used to test error handling by UseStatusCodePagesWithReExecute()
         }
         [HttpGet]
-        public async Task<ActionResult> GetPlanList(string filterString, bool isRegexFilter)
+        public async Task<ActionResult> GetPlanList([DataSourceRequest] DataSourceRequest request, string filterString, bool isRegexFilter)
         {
             _logger.LogInformation( $"Arguments:({nameof( filterString )}:{filterString},{nameof( isRegexFilter )}:{isRegexFilter})." );
-            string error = null;
 
             List<string> planList = null;
             try
@@ -59,14 +58,16 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
             }
             catch( Exception ex )
             {
-                error = ex.Message;
+                ModelState.AddModelError( string.Empty, ex.Message );
                 _logger.LogError( ex, "Exception encountered." );
             }
-            if( planList == null )
-            {
-                planList = new List<string>();
-            }
-            return Json( planList, _defaultJsonSerializerSettings );
+            //if( planList == null )
+            if( ModelState.IsValid )
+                return Json( planList, _defaultJsonSerializerSettings );
+            else
+                return Json( new List<string>().ToDataSourceResult( request, ModelState ) );
+            
+            //return Json( planList.ToDataSourceResult(request, ModelState), _defaultJsonSerializerSettings );
         }
         [HttpPost]
         public async Task<ActionResult> GetPlanHistoryList([DataSourceRequest] DataSourceRequest request, string planUniqueName, int showNRecs)

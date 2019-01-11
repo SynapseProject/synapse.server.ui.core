@@ -44,7 +44,7 @@
                                      m.Field( f => f.IsActionGroup );
                                      m.Field( f => f.Source );
                                  } )
-                                .Events( e => e.Error( "SYNAPSEUI.planExec.treelistDynamicParmsDataSourceError" ) )
+                                .Events( e => e.Error( "SYNAPSEUI.planExec.dataSourceError" ) )
                             )
                             .Events( e => e.DataBound( "SYNAPSEUI.planExec.treelistDynamicParmsDataBound" ) )
                 //.HtmlAttributes(new { style = "width:100%;" })
@@ -105,6 +105,7 @@
                             .Ajax()
                             .ServerOperation(true)
                             .Read(read => read.Action("GetPlanHistoryList", "PlanExecution").Data("SYNAPSEUI.planExec.gridPlanHistoryData").Type(HttpVerbs.Post))
+                            .Events( e => e.Error( "SYNAPSEUI.planExec.dataSourceError" ) )
                             )
                         .Columns(columns =>
                         {
@@ -175,7 +176,7 @@
             <div style="height:100%;">
                 @(Html.Kendo().ListBox().Name("listbox-plan-list")
                 .Selectable(ListBoxSelectable.Single)
-                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "PlanExecution").Data("SYNAPSEUI.planExec.listboxPlanListData")))                
+                .DataSource(ds => ds.Read(read => read.Action("GetPlanList", "PlanExecution").Data("SYNAPSEUI.planExec.listboxPlanListData")).Events( e => e.Error( "SYNAPSEUI.planExec.dataSourceError" ) ) )
                 .Events(e => e
                     .Change("SYNAPSEUI.planExec.listboxPlanListChange")
                     .DataBound("SYNAPSEUI.planExec.listboxPlanListDataBound"))

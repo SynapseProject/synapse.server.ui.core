@@ -117,20 +117,14 @@ SYNAPSEUI.planExec = (function () {
         $listboxPlanList.data( "kendoListBox" ).dataSource.read();
     };
     var refreshPlanHistory = function () {
-        //if (planVM.get("selectedPlanName") === "") $gridPlanHistory.data("kendoGrid").dataSource.data([]);
-        //else $gridPlanHistory.getKendoGrid().dataSource.read();
         $gridPlanHistory.data("kendoGrid").dataSource.data([]);
         $gridPlanHistory.getKendoGrid().dataSource.read();
     };
     var refreshPlanDiagram = function () {
-        //if (planVM.get("selectedPlanName") === "") $diagramPlan.data("kendoDiagram").dataSource.data([]);
-        //else $diagramPlan.getKendoDiagram().dataSource.read();
         $diagramPlan.data("kendoDiagram").dataSource.data([]);
         $diagramPlan.getKendoDiagram().dataSource.read();
     };
     var refreshDynamicParameters = function() {
-        //if (planVM.get("selectedPlanName") === "") $treelistDynamicParms.data("kendoTreeList").dataSource.data([]);
-        //else $treelistDynamicParms.data("kendoTreeList").dataSource.read();
         $treelistDynamicParms.data("kendoTreeList").dataSource.data([]);
         $treelistDynamicParms.data("kendoTreeList").dataSource.read();
     };
@@ -301,26 +295,12 @@ SYNAPSEUI.planExec = (function () {
                 //}
             } )
             .data( "kendoValidator" );
-        checkRemoteService();
+        // mvc helper event binding can bind to only 1 handler
+        var ds = $treelistDynamicParms.data( "kendoTreeList" ).dataSource.bind( "error", function ( e ) { $btnExecutePlan.prop( "disabled", true ); } );
 
-    };
-    // check if there is connection to the remote service
-    var checkRemoteService = function () {
-        
-        $.ajax( getActionUrl( "IsConnected", "PlanExecution" ) )
-            .then( function ( data ) {
-                if ( data != true )
-                    showNotification( "Not able to connect to the remote service", "error" );
-            } )
-            .fail( function ( jqXHR, textStatus, errorThrown ) {
-                var msg = decipherJqXhrError( jqXHR, textStatus );
-                showNotification( "Error encountered. <br/>" + msg, "error" );
-            } );
     };
     // btn-refresh-plan-list
     var btnRefreshPlanListClick = function (e) {
-        //console.log("btnRefreshPlanListClick is running");
-        //$listboxPlanList.data("kendoListBox").dataSource.read();
         refreshPlanList();
     };    
     // listbox-plan-list
@@ -330,26 +310,26 @@ SYNAPSEUI.planExec = (function () {
             isRegexFilter: $spanFilterType.hasClass("regex-filter")
         };
     };
-    //var dataSourceError = function (e) {        
-    //    this.data([]);  // "this" is set to the data source instance
-    //    //console.log(e);
-    //    // e.status can be null, "timeout", "error", "abort", and "parsererror"
-    //    // e.errorThrown is the textual portion of the HTTP status
-    //    if (e) {
-    //        var msg = decipherJqXhrError(e.xhr, e.status);
-    //        if (e.errors) {
-    //            $.each(e.errors, function (key, value) {                    
-    //                if ('errors' in value) {
-    //                    $.each(value.errors, function () {
-    //                        msg += this + "\n";
-    //                    });
-    //                }
-    //            });
-    //        }
-    //        //noti.error("Request failed. " + "\n" + msg);
-    //        showNotification(msg, "error");
-    //    }
-    //};
+    var dataSourceError = function (e) {        
+        this.data([]);  // "this" is set to the data source instance
+        //console.log(e);
+        // e.status can be null, "timeout", "error", "abort", and "parsererror"
+        // e.errorThrown is the textual portion of the HTTP status
+        if (e) {
+            var msg = decipherJqXhrError(e.xhr, e.status);
+            if (e.errors) {
+                $.each(e.errors, function (key, value) {                    
+                    if ('errors' in value) {
+                        $.each(value.errors, function () {
+                            msg += this + "\n";
+                        });
+                    }
+                });
+            }
+            //noti.error("Request failed. " + "\n" + msg);
+            showNotification(msg, "error");
+        }
+    };
     var listboxPlanListChange = function (e) {
         //console.log("listboxPlanListChange is running");
         var pn = $(e.sender.wrapper).find(".k-item.k-state-selected").text();
@@ -431,9 +411,6 @@ SYNAPSEUI.planExec = (function () {
         var selectInput = $( "select.js-dynamic-value" );
         selectInput.filter( "[data-role='dropdownlist']" ).kendoDropDownList();
         selectInput.filter( "[data-role='combobox']" ).kendoComboBox();
-    };
-    var treelistDynamicParmsDataSourceError = function ( e ) {
-        $btnExecutePlan.prop( "disabled", true );
     };
     // btn-execute-plan
     var btnExecutePlanClick = function (e) {
@@ -529,14 +506,8 @@ SYNAPSEUI.planExec = (function () {
             data: { 'planUniqueName': planVM.get("selectedPlanName"), 'planInstanceId': planVM.get("selectedInstanceId") },
             dataType: 'text'
         }).done(function (data, textStatus, xhr) {
-            //kendo.alert("Cancel request submitted. Click refresh to check status"); 
-            //showAlert("Cancel plan execution", "Cancel request submitted. Click refresh to check status");            
-            //noti.info("Cancel request submitted. Click refresh to check status");
             showNotification("Cancel request submitted. Click refresh to check status", "info");
             }).fail(function (xhr, textStatus, errorThrown) {
-                //kendo.alert("There was a problem when tryig to cancel the plan");
-                //showAlert("Cancel plan execution", "There was a problem submitting the cancel request");
-                //noti.error("There was a problem submiting the cancel request");
                 showNotification("There was a problem submiting the cancel request", "error");
             });
     };
@@ -823,7 +794,6 @@ SYNAPSEUI.planExec = (function () {
         btnRefreshPlanHistoryClick: btnRefreshPlanHistoryClick,
         treelistDynamicParmsData: treelistDynamicParmsData,
         treelistDynamicParmsDataBound: treelistDynamicParmsDataBound,
-        treelistDynamicParmsDataSourceError: treelistDynamicParmsDataSourceError,
         btnExecutePlanClick: btnExecutePlanClick,
         btnResetClick: btnResetClick,
         btnCancelPlanClick: btnCancelPlanClick,
@@ -836,7 +806,7 @@ SYNAPSEUI.planExec = (function () {
         btnRefreshResultPlanClick: btnRefreshResultPlanClick,
         showNotification: showNotification,
         decipherJqXhrError: decipherJqXhrError,
-        //dataSourceError: dataSourceError
+        dataSourceError: dataSourceError
     };
 })();
 
