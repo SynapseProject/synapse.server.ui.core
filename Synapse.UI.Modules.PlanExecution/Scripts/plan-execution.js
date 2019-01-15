@@ -117,16 +117,22 @@ SYNAPSEUI.planExec = (function () {
         $listboxPlanList.data( "kendoListBox" ).dataSource.read();
     };
     var refreshPlanHistory = function () {
-        $gridPlanHistory.data("kendoGrid").dataSource.data([]);
-        $gridPlanHistory.getKendoGrid().dataSource.read();
+        $gridPlanHistory.data( "kendoGrid" ).dataSource.data( [] );
+        // call read only if a plan was selected
+        if ( planVM.get( "selectedPlanName" ) != "" ) 
+            $gridPlanHistory.getKendoGrid().dataSource.read();
     };
     var refreshPlanDiagram = function () {
-        $diagramPlan.data("kendoDiagram").dataSource.data([]);
-        $diagramPlan.getKendoDiagram().dataSource.read();
+        $diagramPlan.data( "kendoDiagram" ).dataSource.data( [] );
+        // call read only if a plan was selected
+        if ( planVM.get( "selectedPlanName" ) != "" ) 
+            $diagramPlan.getKendoDiagram().dataSource.read();
     };
     var refreshDynamicParameters = function() {
-        $treelistDynamicParms.data("kendoTreeList").dataSource.data([]);
-        $treelistDynamicParms.data("kendoTreeList").dataSource.read();
+        $treelistDynamicParms.data( "kendoTreeList" ).dataSource.data( [] );
+        // call read only if a plan was selected
+        if ( planVM.get( "selectedPlanName" ) != "" ) 
+            $treelistDynamicParms.data("kendoTreeList").dataSource.read();
     };
     var refreshResultPlan = function () {
         //$codeResultPlan.empty().closest("pre").scrollTop(0).scrollLeft(0);
@@ -336,7 +342,7 @@ SYNAPSEUI.planExec = (function () {
         planVM.set("selectedPlanName", pn);        
     };
     var listboxPlanListDataBound = function (e) {
-        //console.log("listboxPlanListDataBound is running");
+        console.log("listboxPlanListDataBound is running");
         planVM.set("selectedPlanName", "");
     };
     // tabstrip
@@ -401,11 +407,12 @@ SYNAPSEUI.planExec = (function () {
         //console.log("treelistDynamicParmsDataBound is running");
         //$( "select.js-dynamic-value" ).kendoDropDownList();
 
-        // loop thru each input element and set the td.data( "key", "value" )
+        // loop thru each input element and store the field name in data-key attribute of the td element
         // assumes 1 input element per table column
-        // must do this before you instantiate the kendo widgets
+        // must be done before you instantiate the kendo widgets
         $( ".js-dynamic-value" ).each( function ( index ) {
-            $( this ).closest( "td" ).data( "key", $( this ).attr( 'name' ) );
+            //$( this ).closest( "td" ).data( "key", $( this ).attr( 'name' ) );
+            $( this ).closest( "td" ).attr( "data-key", $( this ).attr( 'name' ) );
         } );
 
         var selectInput = $( "select.js-dynamic-value" );
@@ -427,21 +434,63 @@ SYNAPSEUI.planExec = (function () {
         if (planVM.get("isExecute")) {
             var pn = planVM.get("selectedPlanName");
             var dyn = {};
-            // cant just select all .js-dynamic-value because of the way kendo dropdownlist is implemented
-            $.each($("input.js-dynamic-value"), function (i, obj) {
-                obj.value = obj.value.trim();
+            // can't just select all .js-dynamic-value because of the way kendo dropdownlist, combobox are implemented
+            $treelistDynamicParms.find( "td[data-key]" ).each( function ( i ) {
+                var key = $( this ).data( "key" );
+                var inp = $( "#" + key );
+                switch ( inp.attr( "data-role" ) ) {
+                    case "combobox":
+                        //v = inp.data( 'kendoComboBox' ).value();
+                        v = inp.data( 'kendoComboBox' ).text();
+                        break;
+                    case "dropdownlist":
+                        //v = inp.data( 'kendoDropDownList' ).value();
+                        v = inp.data( 'kendoDropDownList' ).text();
+                        break;
+                    default:  // assume textbox
+                        v = inp.val();
+                };
                 var $passblank = $( this ).closest( 'tr' ).find( '.js-pass-blank' );
-                if (obj.value.length !== 0) {
-                    //dyn[obj.name] = encodeURIComponent( obj.value );
-                    var key = $( this ).closest( "td" ).data( "key" );
-                    dyn[key] = encodeURIComponent( obj.value );
-                    $passblank.prop('checked', false);
+                if ( v.length !== 0 || $passblank.is( ':checked' ) ) {
+                    dyn[key] = encodeURIComponent( v );
                 }
-                else {
-                    // check whether to include blank
-                    if ($passblank.is(':checked')) dyn[obj.name] = obj.value;
-                }
-            });
+                // console.log( key, v );
+            } );
+            //console.log( dyn );
+
+            //$.each( $( "input.js-dynamic-value" ), function ( i, obj ) {
+            //    //obj.value = obj.value.trim();
+            //    var $passblank = $( this ).closest( 'tr' ).find( '.js-pass-blank' );
+
+            //    // get the source name
+            //    var key = $( this ).closest( "td" ).data( "key" );
+                
+            //    // get the value
+            //    var v = null;
+            //    var inputType = obj.getAttribute( "role" );
+            //    switch ( inputType ) {
+            //        case "combobox":
+            //            v = $( "#" + key ).data('kendoComboBox').value();
+            //            break;
+            //        case "dropdownlist":
+            //            v = $( "#" + key ).data('kendoDropDownList').value();
+            //            break;
+            //        default: // assume textbox
+            //            v = obj.value.trim();
+            //    }
+
+            //    //if (obj.value.length !== 0) {
+            //    if ( v.length !== 0 ) {
+            //        //dyn[obj.name] = encodeURIComponent( obj.value );
+            //        // var key = $( this ).closest( "td" ).data( "key" );
+            //        dyn[key] = encodeURIComponent( v );
+            //        //$passblank.prop('checked', false);
+            //    }
+            //    else {
+            //        // check whether to include blank
+            //        if ($passblank.is(':checked')) dyn[obj.name] = v;
+            //    }
+            //});
 
             var d = {
                 'PlanUniqueName': pn,

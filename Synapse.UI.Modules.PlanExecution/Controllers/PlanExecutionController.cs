@@ -319,7 +319,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
             
             StartPlanParmsVM startPlanParms = JsonConvert.DeserializeObject<StartPlanParmsVM>( Convert.ToString( requestLoad ) );
             bool ok = false;
-            string remoteServiceErrorMessage = string.Empty;
+            string remoteServiceException = string.Empty;
             ResponseVM r = null;
 
             long instanceId = 0;
@@ -336,9 +336,9 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
                         DynamicValue dv = dynamicValues.Find( x => x.Source == parm.Key );
                         if( dv != null )
                         {
-                            if( !dv.Validate( parm.Value, out string error ) )
+                            if( !dv.Validate( parm.Value, out string validateError ) )
                             {
-                                ModelState.AddModelError( parm.Key, error );
+                                ModelState.AddModelError( parm.Key, validateError );
                                 //throw new ArgumentException( error );
                                 //_logger.LogError()
                             }
@@ -354,7 +354,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
             }
             catch( Exception ex )
             {
-                remoteServiceErrorMessage = ex.Message;
+                remoteServiceException = ex.Message;
                 _logger.LogError( ex, "Exception encountered." );
             }
             if( ok )
@@ -385,7 +385,7 @@ namespace Synapse.UI.Modules.PlanExecution.Controllers
                 r = new ResponseVM
                 {
                     Status = Constants.ERROR,
-                    Message = remoteServiceErrorMessage
+                    Message = remoteServiceException
                 };
             }
             return Json( r, _defaultJsonSerializerSettings ); // instanceId.ToString();

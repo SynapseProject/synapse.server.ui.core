@@ -239,11 +239,11 @@
     # if ( Source != null && Source != '' && Editable ) { #
     #   if ( Options == null || Options.length == 0 ) { #
     #     var pattern = Validation == null ? "" : "pattern=" + Validation.replace(/'/g, "\x27").replace(/"/g, "\x22") + ' validationMessage="Failed validation rule ' + Validation.replace(/"/g, "&quot;") + '"' #
-    <input type='text' name=#:Source# value='' class="k-textbox js-dynamic-value" #=pattern# />
+    <input id=#:Source# name=#:Source# autocomplete="off" class="k-textbox js-dynamic-value" #=pattern# />
     #   } else { #
     # var dataRole = RestrictToOptions ? "dropdownlist" : "combobox" #
-    <select name=#:Source# class="js-dynamic-value" data-role=#:dataRole#>
-        <option value=""></option>
+    <select id=#:Source# name=#:Source# class="js-dynamic-value" data-role=#:dataRole#>
+        @*<option value=""></option>*@
         # for ( var i = 0; i < Options.length; i++ ) { #
         # var selected = Options[i].IsDefault ? "selected" : "" #
         <option value=#:Options[i].Key# #:selected#>#= Options[i].Value #</option>
